@@ -6,6 +6,7 @@ import 'dart:ui';
 
 import 'package:event_tracker/controller/qr_generator.controller.dart';
 import 'package:event_tracker/domain/ticket.model.dart';
+import 'package:event_tracker/features/take-ticket-form-field.dart';
 import 'package:event_tracker/networking.dart';
 import 'package:event_tracker/utils/utils.dart';
 import 'package:flutter/material.dart';
@@ -199,6 +200,35 @@ class QrGeneratorScreen extends ConsumerWidget {
                     : "All Exported Data",
                 style: TextStyle(fontSize: 16.sp),
               )),
+          Center(
+            child: GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => TakeTicketFormPage(),
+                  ),
+                );
+              },
+              child: Container(
+                height: 20,
+                width: 150,
+                decoration: BoxDecoration(
+                  color: Color.fromARGB(255, 55, 89, 117),
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: Center(
+                  child: Text(
+                    "Take Ticket",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
           SizedBox(
             height: 20.h,
           ),
