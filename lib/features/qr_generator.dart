@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:event_tracker/controller/qr_generator.controller.dart';
@@ -32,6 +33,9 @@ class QrGeneratorScreen extends ConsumerWidget {
     final qrCodes = ref.watch(qrCodesProvider);
     final qrCodesKeys = ref.watch(qrCodesKeysProvider);
     final exampleImg = ref.watch(exampleImages);
+    final isLoading = ref.watch(loadingProvider);
+
+    ScrollController _controller = ScrollController();
 
     Future<List<dynamic>> loadAsset(String path) async {
       final input = File(path).openRead();
@@ -77,12 +81,25 @@ class QrGeneratorScreen extends ConsumerWidget {
 
     generateQrCode() {
       List qrCodes = [];
-
+      List<GlobalKey> keys = [];
+      List randomQrUuid = [];
       for (var element in extractedData) {
         var key = GlobalKey();
+        final uuidRandom = DateTime.now().millisecondsSinceEpoch +
+            Random().nextInt(1000000) +
+            500;
         qrCodes.add(RepaintBoundary(
             key: key,
             child: Column(children: [
+              SizedBox(
+                height: 15.h,
+              ),
+              SizedBox(
+                  width: 100.w,
+                  height: 60.h,
+                  child: Image.asset(
+                    "assets/icons/movie.png",
+                  )),
               SizedBox(
                 height: 10.h,
               ),
@@ -97,22 +114,25 @@ class QrGeneratorScreen extends ConsumerWidget {
               ),
               QrImage(
                 data:
-                    "Ticket ID: RRQ12344 \nName:  ${element.name} \n Email: ${element.email}",
+                    "Ticket Booking $uuidRandom \nName:  ${element.name} \n Email: ${element.email}",
                 version: QrVersions.auto,
                 size: 320,
                 gapless: false,
               )
             ])));
-        ref.read(qrCodesKeysProvider.notifier).state = [...qrCodesKeys, key];
+        keys.add(key);
+        randomQrUuid.add(uuidRandom);
       }
+      ref.read(qrCodesKeysProvider.notifier).state = keys;
       ref.read(qrCodesProvider.notifier).state = qrCodes;
-      alertDialog(context);
+      ref.read(randomQrUuidProvider.notifier).state = randomQrUuid;
     }
 
     void takeScreenShot() async {
       PermissionStatus res;
       res = await Permission.storage.request();
       if (res.isGranted) {
+        List savedImage = [];
         for (var element in qrCodesKeys) {
           final boundary = element.currentContext!.findRenderObject()
               as RenderRepaintBoundary;
@@ -128,23 +148,29 @@ class QrGeneratorScreen extends ConsumerWidget {
               '$directory/${DateTime.now()}.png',
             );
             imgFile.writeAsBytes(pngBytes);
-            ref.read(exampleImages.notifier).state = [...exampleImg, imgFile];
+            savedImage.add(imgFile);
           }
         }
+        ref.read(exampleImages.notifier).state = savedImage;
       }
     }
 
-    log("${exampleImg}skkkkkkkkkkkkkk");
     return Scaffold(
       appBar: AppBar(title: const Text("Event Manager")),
       body: ListView(
+        controller: _controller,
         children: [
           Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                const Expanded(child: Text("Import File")),
+                Expanded(
+                    child: Text(
+                  "Import File",
+                  style:
+                      TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w400),
+                )),
                 IconButton(
                     onPressed: pickFileContainsExcel,
                     icon: const Icon(Icons.upload)),
@@ -168,7 +194,9 @@ class QrGeneratorScreen extends ConsumerWidget {
           Container(
               margin: EdgeInsets.only(left: 20.w, top: 20.h),
               child: Text(
-                "All Exported Data",
+                extractedData == null
+                    ? "Select a csv file"
+                    : "All Exported Data",
                 style: TextStyle(fontSize: 16.sp),
               )),
           SizedBox(
@@ -218,33 +246,64 @@ class QrGeneratorScreen extends ConsumerWidget {
                     children: [...qrCodes],
                   ))),
           Visibility(
-              visible: exampleImg.length != 0,
-              child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 10.r),
-                  alignment: Alignment.center,
-                  child: exampleImg.length == 0
-                      ? const SizedBox.shrink()
-                      : ElevatedButton(
-                          onPressed: () async {
-                            final DioClient _client = DioClient();
-
-                            final resp = await _client.getUser(exampleImg);
-                            log("$resp resp");
-                            alertDialog(context);
-                          },
-                          child: Text("Save To Database")))),
+            visible: exampleImg.length != 0,
+            child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 60.w, vertical: 20.h),
+                color: const Color.fromARGB(255, 195, 211, 240),
+                child: TextButton.icon(
+                  style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 50, vertical: 20),
+                      textStyle: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold)),
+                  onPressed: () {
+                    handleSubmit(ref, context);
+                  },
+                  icon: isLoading
+                      ? const CircularProgressIndicator(
+                          color: Colors.white,
+                        )
+                      : const Icon(Icons.save_rounded),
+                  label: const Text("Save To Database"),
+                )),
+          )
         ],
       ),
       floatingActionButton: Visibility(
-          visible: qrCodes.length != 0,
+          visible: qrCodes.length != 0 && exampleImg.length == 0,
           child: CircleAvatar(
             maxRadius: 30,
             child: IconButton(
               color: Colors.white,
-              onPressed: takeScreenShot,
+              onPressed: () {
+                takeScreenShot();
+                _controller.jumpTo(_controller.position.maxScrollExtent + 200);
+              },
               icon: const Icon(Icons.save),
             ),
           )),
     );
+  }
+
+  handleSubmit(ref, context) async {
+    final exampleImg = ref.watch(exampleImages);
+    final randomQrUuid = ref.watch(randomQrUuidProvider);
+    ref.read(loadingProvider.notifier).state = true;
+    final DioClient client = DioClient();
+    final uploadedImages = await client.uploadImages(exampleImg);
+    final userData = await ref.watch(extractedDataFromFile);
+    List newFilterUserData = [];
+    for (var user in userData) {
+      final index = userData.indexOf(user);
+      newFilterUserData.add({
+        ...user.toJson(),
+        "qr_code": uploadedImages[index],
+        "uniqueUUid": randomQrUuid[index]
+      });
+    }
+    await client.create(newFilterUserData);
+    ref.read(loadingProvider.notifier).state = false;
+    // ignore: use_build_context_synchronously
+    alertDialog(context);
   }
 }

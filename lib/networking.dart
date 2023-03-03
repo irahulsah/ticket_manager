@@ -3,11 +3,11 @@ import 'package:dio/dio.dart' as dio;
 class DioClient {
   final dio.Dio _dio = dio.Dio();
 
-  final _baseUrl = 'https://reqres.in/api';
+  final _baseUrl = 'http://192.168.138.69:3000';
 
   // TODO: Add methods
 
-  Future<dynamic> getUser(files) async {
+  Future<dynamic> uploadImages(files) async {
     // Perform GET request to the endpoint "/users/<id>"
 
     var formData = dio.FormData.fromMap({
@@ -17,14 +17,15 @@ class DioClient {
           .toList()
     });
 
-    dynamic userData = await _dio
-        .post("http://192.168.2.107:3000/tickets/upload", data: formData);
+    dynamic userData =
+        await _dio.post("$_baseUrl/tickets/upload", data: formData);
 
-    // Prints the raw data returned by the server
-    print('User Info: ${userData}');
+    return userData.data;
+  }
 
-    // Parsing the raw JSON data to the User class
-
+  Future<dynamic> create(data) async {
+    _dio.options.headers['Content-Type'] = 'application/json';
+    dynamic userData = await _dio.post("$_baseUrl/tickets", data: data);
     return userData;
   }
 }
