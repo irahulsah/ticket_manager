@@ -28,4 +28,9 @@ class DioClient {
     dynamic userData = await _dio.post("$_baseUrl/tickets", data: data);
     return userData;
   }
+
+  Future<dynamic> get() async {
+    dynamic userData = await _dio.get("$_baseUrl/tickets");
+    return userData.data;
+  }
 }

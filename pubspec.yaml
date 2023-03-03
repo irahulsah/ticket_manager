@@ -43,6 +43,7 @@ dependencies:
   path_provider: ^2.0.13
   csv: ^5.0.1
   dio: ^5.0.1
+  qr_code_scanner: ^1.0.1
 
 dev_dependencies:
   flutter_test:

@@ -1,4 +1,3 @@
-import 'package:event_tracker/features/qr_generator.dart';
 import 'package:event_tracker/features/take-ticket.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

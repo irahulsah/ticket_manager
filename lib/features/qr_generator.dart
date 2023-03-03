@@ -93,23 +93,29 @@ class QrGeneratorScreen extends ConsumerWidget {
             key: key,
             child: Column(children: [
               SizedBox(
-                height: 15.h,
-              ),
-              SizedBox(
-                  width: 100.w,
-                  height: 60.h,
-                  child: Image.asset(
-                    "assets/icons/movie.png",
-                  )),
-              SizedBox(
                 height: 10.h,
               ),
-              Text("Ticket ${(extractedData.indexOf(element) + 1).toString()}",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blueAccent)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                      width: 30.w,
+                      height: 30.h,
+                      child: Image.asset(
+                        "assets/images/ticket.jpg",
+                      )),
+                  SizedBox(
+                    width: 2.h,
+                  ),
+                  Text(
+                      "Ticket ${(extractedData.indexOf(element) + 1).toString()}",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blueAccent)),
+                ],
+              ),
               SizedBox(
                 height: 5.h,
               ),
@@ -161,6 +167,39 @@ class QrGeneratorScreen extends ConsumerWidget {
       body: ListView(
         controller: _controller,
         children: [
+          SizedBox(
+            height: 10.h,
+          ),
+          Center(
+            child: GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => TakeTicketFormPage(),
+                  ),
+                );
+              },
+              child: Container(
+                height: 40,
+                width: 150,
+                padding: EdgeInsets.symmetric(vertical: 10),
+                decoration: BoxDecoration(
+                  color: Color.fromARGB(255, 55, 89, 117),
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: Center(
+                  child: Text(
+                    "Take Ticket",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
             child: Row(
@@ -200,35 +239,6 @@ class QrGeneratorScreen extends ConsumerWidget {
                     : "All Exported Data",
                 style: TextStyle(fontSize: 16.sp),
               )),
-          Center(
-            child: GestureDetector(
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => TakeTicketFormPage(),
-                  ),
-                );
-              },
-              child: Container(
-                height: 20,
-                width: 150,
-                decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 55, 89, 117),
-                  borderRadius: BorderRadius.circular(18),
-                ),
-                child: Center(
-                  child: Text(
-                    "Take Ticket",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
           SizedBox(
             height: 20.h,
           ),

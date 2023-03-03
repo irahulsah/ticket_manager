@@ -30,7 +30,7 @@ class _TakeTicketFormPageState extends State<TakeTicketFormPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "Take Ticket",
           style: TextStyle(
             color: Colors.black,
@@ -49,17 +49,19 @@ class _TakeTicketFormPageState extends State<TakeTicketFormPage> {
           // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             inputField("Scanned By", _scannedByController),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             inputField("Notes", _notesController),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             GestureDetector(
               onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => ScannedTickets()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ScannedTickets()));
               },
               child: Container(
                 height: 40,
@@ -68,7 +70,7 @@ class _TakeTicketFormPageState extends State<TakeTicketFormPage> {
                   color: Colors.blue[900],
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Center(
+                child: const Center(
                     child: Text(
                   "Sumbit",
                   style: TextStyle(
@@ -93,34 +95,34 @@ class _TakeTicketFormPageState extends State<TakeTicketFormPage> {
       children: [
         Text(
           "$hintText",
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
         TextField(
           controller: controller,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 18,
           ),
           decoration: InputDecoration(
-            contentPadding: EdgeInsets.only(
+            contentPadding: const EdgeInsets.only(
               left: 10,
             ),
             border: InputBorder.none,
             hintText: hintText,
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(
+              borderSide: const BorderSide(
                 color: Colors.grey,
               ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(
+              borderSide: const BorderSide(
                 color: Colors.black,
               ),
             ),
