@@ -1,8 +1,8 @@
-import session from './session';
-import user from './user';
-import tickets from './tickets';
+const session = require('./session');
+const user = require('./user');
+const tickets = require('./tickets');
 
-export default {
+module.exports = {
   session,
   user,
   tickets,

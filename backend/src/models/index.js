@@ -1,7 +1,8 @@
-import mongoose from 'mongoose';
+const { Module } = require('module');
+const mongoose = require('mongoose');
+const User = require('./user');
+const Ticket = require('./tickets');
 
-import User from './user';
-import Ticket from './tickets';
 
 const connectDb = () => {
   return mongoose.connect(process.env.DATABASE_URL, {useNewUrlParser: true});
@@ -9,6 +10,5 @@ const connectDb = () => {
 
 const models = { User, Ticket };
 
-export { connectDb };
+module.exports =  {connectDb,models} ;
 
-export default models;

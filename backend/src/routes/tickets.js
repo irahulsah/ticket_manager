@@ -1,5 +1,6 @@
-import { Router } from 'express';
-import multer from 'multer';
+const { Router } = require('express');
+
+const multer = require('multer');
 const nodemailer = require('nodemailer');
 
 var storage = multer.diskStorage({
@@ -62,7 +63,7 @@ router.get('/:messageId', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  const lastTicket = await req.context.models.Ticket.count();
+  const lastTicket = await req.context.models.Ticket.countDocuments();
   const ticket = await req.context.models.Ticket.insertMany(
     req.body.map((tic, idx) => ({
       ...tic,
@@ -91,4 +92,4 @@ router.delete('/:messageId', async (req, res) => {
   return res.send(result);
 });
 
-export default router;
+module.exports = router;

@@ -1,9 +1,10 @@
-import 'dotenv/config';
-import cors from 'cors';
-import express from 'express';
+const cors = require('cors');
+const express = require('express');
+require('dotenv/config');
 
-import models, { connectDb } from './models';
-import routes from './routes';
+const   {connectDb}  = require('./models');
+const  {models} = require('./models');
+const  routes = require('./routes');
 
 const app = express();
 
@@ -20,7 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use('/uploads', express.static('uploads'));
 // Custom Middleware
-
+  
 app.use(async (req, res, next) => {
   req.context = {
     models,
@@ -41,7 +42,7 @@ const eraseDatabaseOnSync = true;
 
 connectDb().then(async () => {
   app.listen(process.env.PORT, () =>
-    console.log(`Example app listening on port ${process.env.PORT}!`),
+    console.log(`app listening on port ${process.env.PORT}!`),
   );
 });
 
