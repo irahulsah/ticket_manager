@@ -9,6 +9,7 @@ class Signup extends StatelessWidget {
   Widget build(BuildContext context) {
     TextEditingController emailController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
+    TextEditingController nameController = TextEditingController();
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -17,12 +18,6 @@ class Signup extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Center(
-              //   child: Image.asset(
-              //     "assets/images/ticket.jpg",
-              //     height: 100.h,
-              //   ),
-              // ),
               Text(
                 "Signup to\nticket Manager",
                 style: TextStyle(
@@ -41,7 +36,7 @@ class Signup extends StatelessWidget {
               // SizedBox(height: 80.h),
 
               inputField(
-                  emailController, false, "Enter full name"), //Email TextBox
+                  nameController, false, "Enter full name"), //Name TextBox
               inputField(emailController, false, "Enter email"), //Email TextBox
 
               inputField(passwordController, false,
@@ -67,6 +62,7 @@ class Signup extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 20.h),
+
               InkWell(
                 onTap: () {
                   Navigator.of(context).push(
