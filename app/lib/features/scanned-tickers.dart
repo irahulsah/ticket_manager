@@ -61,7 +61,8 @@ class _ScannedTicketstate extends ConsumerState<ScannedTickets> {
                                 .toIso8601String()
                                 .split("T")[0],
                             StringExtension.displayTimeAgoFromTimestamp(
-                                ticket.createdAt)))
+                                ticket.createdAt),
+                            ticket.event))
                         .toList()
                   ],
                 ),
@@ -70,7 +71,7 @@ class _ScannedTicketstate extends ConsumerState<ScannedTickets> {
     );
   }
 
-  Widget ticketCard(final ticketNo, final date, final time) {
+  Widget ticketCard(final ticketNo, final date, final time, event) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(
@@ -104,6 +105,13 @@ class _ScannedTicketstate extends ConsumerState<ScannedTickets> {
               children: [
                 Text(
                   "$ticketNo",
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  "Event: $event",
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,

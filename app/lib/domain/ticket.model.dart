@@ -15,6 +15,7 @@ class TicketModel {
     required this.name,
     this.ticketId,
     this.createdAt,
+    required this.event,
     // this.tickerId,
   });
 
@@ -22,6 +23,7 @@ class TicketModel {
   String name;
   String? ticketId;
   String? createdAt;
+  String event;
   // String? tickerId;
 
   factory TicketModel.fromJson(Map<String, dynamic> json) => TicketModel(
@@ -29,6 +31,7 @@ class TicketModel {
         name: json["name"],
         ticketId: json["ticketId"],
         createdAt: json["createdAt"],
+        event: json["event"]["name"],
         // tickerId: json["ticket_id"],
       );
 
@@ -37,6 +40,7 @@ class TicketModel {
         "name": name,
         "ticketId": ticketId,
         "createdAt": createdAt,
+        "event": event,
         // "ticket_id": tickerId,
       };
 }

@@ -21,6 +21,11 @@ const ticketSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  event: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Event",
+    required: true,
+  },
   isActive: {
     type: Boolean,
     required: false,

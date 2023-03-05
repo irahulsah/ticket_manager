@@ -49,7 +49,7 @@ const sendMail = (body) => {
 const router = Router();
 
 router.get("/", async (req, res) => {
-  const messages = await req.context.models.Ticket.find({isActive: false});
+  const messages = await req.context.models.Ticket.find({isActive: false}).populate('event');
   return res.send(messages);
 });
 
@@ -72,7 +72,6 @@ router.post("/", async (req, res) => {
   return res.send(ticket);
 });
 router.post("/upload", upload.array("files"), async (req, res) => {
-  console.log(req.files);
   const files = req.files.map((f) => "/uploads/" + f.filename);
   return res.send(files);
 });

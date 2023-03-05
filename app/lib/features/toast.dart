@@ -1,93 +1,95 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
-class Toast {
-  static void show(String msg, BuildContext context) {
-    Color textColor = Colors.white;
-    Color backgroundColor = Colors.blueAccent;
-    dismiss();
-    Toast._createView(msg, context, backgroundColor, textColor);
-  }
-
-  static OverlayEntry? _overlayEntry;
-  static bool isVisible = false;
-
-  static void _createView(
-    String msg,
-    BuildContext context,
-    Color background,
-    Color textColor,
-  ) async {
-    var overlayState = Overlay.of(context);
-
-    final themeData = Theme.of(context);
-
-    _overlayEntry = OverlayEntry(
-      builder: (BuildContext context) => _ToastAnimatedWidget(
-        key: const Key("qa"),
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          child: Container(
-            alignment: Alignment.center,
-            width: MediaQuery.of(context).size.width,
-            child: Container(
-              decoration: BoxDecoration(
-                color: background,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              margin: EdgeInsets.symmetric(horizontal: 20),
-              padding: EdgeInsets.fromLTRB(16, 10, 16, 10),
-              child: Text(
-                msg,
-                softWrap: true,
-              ),
+class CustomScaffoldMessenger {
+  CustomScaffoldMessenger.error(String text, BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      behavior: SnackBarBehavior.floating,
+      content: Row(
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            child: const Icon(
+              Icons.error,
+              color: Colors.white,
             ),
           ),
-        ),
+          Flexible(
+            child: Text(
+              text,
+              maxLines: 3,
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(color: Colors.white, fontSize: 14),
+            ),
+          ),
+        ],
       ),
-    );
-    isVisible = true;
-    overlayState.insert(_overlayEntry!);
+      backgroundColor: Colors.redAccent,
+    ));
+  }
+  CustomScaffoldMessenger.info(String text, BuildContext context,
+      {bool? canDismiss = false}) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      behavior: SnackBarBehavior.floating,
+      content: Row(
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            child: const Icon(
+              Icons.info,
+              color: Colors.white,
+            ),
+          ),
+          Flexible(
+            child: Text(
+              text,
+              maxLines: 3,
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(color: Colors.white, fontSize: 14),
+            ),
+          ),
+        ],
+      ),
+      backgroundColor: const Color(0xff212529),
+      // duration: const Duration(milliseconds: 1000),
+    ));
   }
 
-  static dismiss() async {
-    if (!isVisible) {
-      return;
-    }
-    isVisible = false;
-    _overlayEntry?.remove();
-  }
-}
+  CustomScaffoldMessenger.sucess(String text, BuildContext context,
+      {bool? canDismiss = false}) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      behavior: SnackBarBehavior.floating,
 
-class _ToastAnimatedWidget extends StatefulWidget {
-  _ToastAnimatedWidget({
-    required Key key,
-    required this.child,
-  }) : super(key: key);
-
-  final Widget child;
-
-  @override
-  _ToastWidgetState createState() => _ToastWidgetState();
-}
-
-class _ToastWidgetState extends State<_ToastAnimatedWidget>
-    with SingleTickerProviderStateMixin {
-  bool get _isVisible => true; //update this value later
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned(
-        bottom: 50,
-        child: AnimatedOpacity(
-          duration: Duration(seconds: 2),
-          opacity: _isVisible ? 1.0 : 0.0,
-          child: widget.child,
-        ));
+      action: canDismiss == true
+          ? SnackBarAction(
+              textColor: Colors.white,
+              label: "Dismiss",
+              onPressed: () {},
+            )
+          : null,
+      content: Row(
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            child: const Icon(
+              Icons.check,
+              color: Colors.white,
+            ),
+          ),
+          Flexible(
+            child: Text(
+              text,
+              maxLines: 3,
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(color: Colors.white, fontSize: 14),
+            ),
+          ),
+        ],
+      ),
+      backgroundColor: Colors.green,
+      // duration: const Duration(milliseconds: 1000),
+    ));
   }
 }

@@ -14,3 +14,7 @@ StateProvider scannedQrList = StateProvider((ref) => []);
 StateProvider scannedQrListLoading = StateProvider((ref) => true);
 
 StateProvider qrCodeScannedData = StateProvider((ref) => null);
+StateProvider eventDataProvider = StateProvider((ref) => []);
+StateProvider isLoadingProvider = StateProvider((ref) => false);
+
+StateProvider eventValueDropdown = StateProvider((ref) => "");

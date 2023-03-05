@@ -1,4 +1,7 @@
+import 'package:event_tracker/features/qr_generator.dart';
 import 'package:event_tracker/features/scanned-tickers.dart';
+import 'package:event_tracker/features/toast.dart';
+import 'package:event_tracker/networking.dart';
 import 'package:flutter/material.dart';
 
 class TakeTicketFormPage extends StatefulWidget {
@@ -10,12 +13,13 @@ class TakeTicketFormPage extends StatefulWidget {
 
 class _TakeTicketFormPageState extends State<TakeTicketFormPage> {
   TextEditingController _scannedByController = TextEditingController();
-  TextEditingController _notesController = TextEditingController();
+  bool isLoading = false;
+  TextEditingController _eventsController = TextEditingController();
   @override
   void initState() {
     // TODO: implement initState
     _scannedByController = TextEditingController();
-    _notesController = TextEditingController();
+    _eventsController = TextEditingController();
     super.initState();
   }
 
@@ -26,12 +30,30 @@ class _TakeTicketFormPageState extends State<TakeTicketFormPage> {
     super.dispose();
   }
 
+  handleSubmit() async {
+    setState(() {
+      isLoading = true;
+    });
+    final DioClient client = DioClient();
+    final updatedData =
+        await client.createEvent({"name": _eventsController.text});
+    // ignore: use_build_context_synchronously
+    setState(() {
+      isLoading = false;
+    });
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const QrGeneratorScreen(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          "Take Ticket",
+          "Event Creator Page",
           style: TextStyle(
             color: Colors.black,
           ),
@@ -48,21 +70,20 @@ class _TakeTicketFormPageState extends State<TakeTicketFormPage> {
         child: Column(
           // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            inputField("Scanned By", _scannedByController),
-            const SizedBox(
-              height: 20,
-            ),
-            inputField("Notes", _notesController),
+            // inputField("Scanned By", _scannedByController),
+            // const SizedBox(
+            //   height: 20,
+            // ),
+            inputField("Event Name", _eventsController),
             const SizedBox(
               height: 20,
             ),
             GestureDetector(
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const ScannedTickets()));
-              },
+              onTap: isLoading
+                  ? () {}
+                  : () {
+                      handleSubmit();
+                    },
               child: Container(
                 height: 40,
                 width: 150,
@@ -70,10 +91,10 @@ class _TakeTicketFormPageState extends State<TakeTicketFormPage> {
                   color: Colors.blue[900],
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Center(
+                child: Center(
                     child: Text(
-                  "Sumbit",
-                  style: TextStyle(
+                  isLoading ? "Creating.." : "Sumbit",
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 18,
                   ),

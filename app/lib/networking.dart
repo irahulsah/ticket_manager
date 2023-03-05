@@ -41,4 +41,15 @@ class DioClient {
     log("userData $userData");
     return userData.data;
   }
+
+  Future<dynamic> createEvent(data) async {
+    dynamic events = await _dio.post("$_baseUrl/events", data: data);
+    return events.data;
+  }
+
+  Future<dynamic> getEvent() async {
+    dynamic events = await _dio.get("$_baseUrl/events");
+    log("events $events");
+    return events.data;
+  }
 }

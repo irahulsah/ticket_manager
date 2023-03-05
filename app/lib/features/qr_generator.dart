@@ -6,7 +6,9 @@ import 'dart:ui';
 
 import 'package:event_tracker/controller/qr_generator.controller.dart';
 import 'package:event_tracker/domain/ticket.model.dart';
+import 'package:event_tracker/features/drop_down.dart';
 import 'package:event_tracker/features/take-ticket-form-field.dart';
+import 'package:event_tracker/features/toast.dart';
 import 'package:event_tracker/networking.dart';
 import 'package:event_tracker/utils/utils.dart';
 import 'package:flutter/material.dart';
@@ -262,31 +264,12 @@ class QrGeneratorScreen extends ConsumerWidget {
                           )
                           .toList(),
                     )),
-          // Visibility(
-          //     visible: extractedData != null,
-          //     child: Container(
-          //       margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
-          //       child: TextFormField(
-          //         controller: textEditingController,
-          //         decoration: const InputDecoration(
-          //           fillColor: Colors.white,
-          //           border: InputBorder.none,
-          //           enabledBorder: OutlineInputBorder(
-          //               borderRadius: BorderRadius.all(Radius.circular(5.0)),
-          //               borderSide: BorderSide(color: Colors.blue)),
-          //           errorBorder: OutlineInputBorder(
-          //               borderRadius: BorderRadius.all(Radius.circular(5.0)),
-          //               borderSide: BorderSide(color: Colors.red)),
-          //           focusedBorder: OutlineInputBorder(
-          //               borderRadius: BorderRadius.all(Radius.circular(5.0)),
-          //               borderSide: BorderSide(color: Colors.blue)),
-          //           filled: true,
-          //           contentPadding:
-          //               EdgeInsets.only(bottom: 10.0, left: 10.0, right: 10.0),
-          //           labelText: "Event Name",
-          //         ),
-          //       ),
-          //     )),
+          Visibility(
+              visible: extractedData != null,
+              child: Container(
+                  margin:
+                      EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+                  child: const DropDownField())),
           Visibility(
               visible: extractedData != null,
               child: Container(
@@ -299,6 +282,11 @@ class QrGeneratorScreen extends ConsumerWidget {
                         textStyle: const TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold)),
                     onPressed: () {
+                      if (ref.read(eventValueDropdown.notifier).state == "") {
+                        CustomScaffoldMessenger.error(
+                            "Please select event to continue", context);
+                        return;
+                      }
                       generateQrCode();
                     },
                     icon: const Icon(Icons.generating_tokens),
@@ -355,6 +343,7 @@ class QrGeneratorScreen extends ConsumerWidget {
   handleSubmit(ref, context) async {
     final exampleImg = ref.watch(exampleImages);
     final randomQrUuid = ref.watch(randomQrUuidProvider);
+    final eventValue = ref.watch(eventValueDropdown);
     ref.read(loadingProvider.notifier).state = true;
     final DioClient client = DioClient();
     final uploadedImages = await client.uploadImages(exampleImg);
@@ -364,6 +353,7 @@ class QrGeneratorScreen extends ConsumerWidget {
       final index = userData.indexOf(user);
       newFilterUserData.add({
         ...user.toJson(),
+        "event": eventValue,
         "qr_code": uploadedImages[index],
         "uniqueUUid": randomQrUuid[index]
       });

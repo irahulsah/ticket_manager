@@ -38,7 +38,7 @@ class _ScanQrPagetate extends ConsumerState<ScanQrPage> {
                 top: Radius.circular(25.0),
               ),
             ),
-            builder: (context) {
+            builder: (ctx) {
               return Container(
                 margin: EdgeInsets.symmetric(vertical: 10.h, horizontal: 20.w),
                 child: Column(
@@ -112,7 +112,7 @@ class _ScanQrPagetate extends ConsumerState<ScanQrPage> {
                     ),
                     ElevatedButton(
                         onPressed: () {
-                          Navigator.of(context).pop();
+                          Navigator.of(ctx).pop();
                           controller.resumeCamera();
                           result = null;
                         },
@@ -125,16 +125,21 @@ class _ScanQrPagetate extends ConsumerState<ScanQrPage> {
         showDialog(
             context: context,
             builder: (ctx) => AlertDialog(
-                  title: Center(
-                    child: Image.asset(
-                      "assets/icons/close.png",
-                      width: 50,
-                      height: 50,
-                    ),
-                  ),
-                  content: const Text(
-                    "Ticket is expired.",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.asset(
+                        "assets/icons/close.png",
+                        width: 50,
+                        height: 50,
+                      ),
+                      SizedBox(height: 20.h),
+                      Text(
+                        "Ticket is expired.",
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w400),
+                      ),
+                    ],
                   ),
                   actions: <Widget>[
                     TextButton(
