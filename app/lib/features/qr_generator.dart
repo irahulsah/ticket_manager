@@ -36,7 +36,9 @@ class QrGeneratorScreen extends ConsumerWidget {
     final exampleImg = ref.watch(exampleImages);
     final isLoading = ref.watch(loadingProvider);
 
-    ScrollController _controller = ScrollController();
+    TextEditingController textEditingController =
+        TextEditingController(text: "");
+    ScrollController controller = ScrollController();
 
     Future<List<dynamic>> loadAsset(String path) async {
       final input = File(path).openRead();
@@ -121,7 +123,7 @@ class QrGeneratorScreen extends ConsumerWidget {
               ),
               QrImage(
                 data:
-                    "Ticket Booking $uuidRandom \nName:  ${element.name} \n Email: ${element.email}",
+                    "Ticket Booking $uuidRandom\nName: ${element.name}\nEmail: ${element.email}",
                 version: QrVersions.auto,
                 size: 320,
                 gapless: false,
@@ -165,7 +167,7 @@ class QrGeneratorScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: const Text("Event Manager")),
       body: ListView(
-        controller: _controller,
+        controller: controller,
         children: [
           SizedBox(
             height: 10.h,
@@ -175,19 +177,19 @@ class QrGeneratorScreen extends ConsumerWidget {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => TakeTicketFormPage(),
+                    builder: (context) => const TakeTicketFormPage(),
                   ),
                 );
               },
               child: Container(
                 height: 40,
                 width: 150,
-                padding: EdgeInsets.symmetric(vertical: 10),
+                padding: const EdgeInsets.symmetric(vertical: 10),
                 decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 55, 89, 117),
+                  color: const Color.fromARGB(255, 55, 89, 117),
                   borderRadius: BorderRadius.circular(18),
                 ),
-                child: Center(
+                child: const Center(
                   child: Text(
                     "Take Ticket",
                     style: TextStyle(
@@ -260,6 +262,31 @@ class QrGeneratorScreen extends ConsumerWidget {
                           )
                           .toList(),
                     )),
+          // Visibility(
+          //     visible: extractedData != null,
+          //     child: Container(
+          //       margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+          //       child: TextFormField(
+          //         controller: textEditingController,
+          //         decoration: const InputDecoration(
+          //           fillColor: Colors.white,
+          //           border: InputBorder.none,
+          //           enabledBorder: OutlineInputBorder(
+          //               borderRadius: BorderRadius.all(Radius.circular(5.0)),
+          //               borderSide: BorderSide(color: Colors.blue)),
+          //           errorBorder: OutlineInputBorder(
+          //               borderRadius: BorderRadius.all(Radius.circular(5.0)),
+          //               borderSide: BorderSide(color: Colors.red)),
+          //           focusedBorder: OutlineInputBorder(
+          //               borderRadius: BorderRadius.all(Radius.circular(5.0)),
+          //               borderSide: BorderSide(color: Colors.blue)),
+          //           filled: true,
+          //           contentPadding:
+          //               EdgeInsets.only(bottom: 10.0, left: 10.0, right: 10.0),
+          //           labelText: "Event Name",
+          //         ),
+          //       ),
+          //     )),
           Visibility(
               visible: extractedData != null,
               child: Container(
@@ -317,7 +344,7 @@ class QrGeneratorScreen extends ConsumerWidget {
               color: Colors.white,
               onPressed: () {
                 takeScreenShot();
-                _controller.jumpTo(_controller.position.maxScrollExtent + 200);
+                controller.jumpTo(controller.position.maxScrollExtent + 200);
               },
               icon: const Icon(Icons.save),
             ),

@@ -1,3 +1,4 @@
+import 'package:event_tracker/features/show_scanned_qr_details.dart';
 import 'package:event_tracker/features/take-ticket.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -26,6 +27,9 @@ class MyApp extends StatelessWidget {
               primarySwatch: Colors.blue,
             ),
             home: const TakeTicket(),
+            routes: {
+              "qr_detail_page": (context) => const ScannedQrCodeDetails()
+            },
           );
         });
   }

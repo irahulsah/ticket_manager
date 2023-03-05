@@ -1,9 +1,11 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart' as dio;
 
 class DioClient {
   final dio.Dio _dio = dio.Dio();
 
-  final _baseUrl = 'http://192.168.138.69:3000';
+  final _baseUrl = 'http://192.168.2.107:3000';
 
   // TODO: Add methods
 
@@ -31,6 +33,12 @@ class DioClient {
 
   Future<dynamic> get() async {
     dynamic userData = await _dio.get("$_baseUrl/tickets");
+    return userData.data;
+  }
+
+  Future<dynamic> updateScannedStatus(uuid) async {
+    dynamic userData = await _dio.put("$_baseUrl/tickets/$uuid");
+    log("userData $userData");
     return userData.data;
   }
 }

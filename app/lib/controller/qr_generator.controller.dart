@@ -12,3 +12,5 @@ StateProvider randomQrUuidProvider = StateProvider((ref) => []);
 //
 StateProvider scannedQrList = StateProvider((ref) => []);
 StateProvider scannedQrListLoading = StateProvider((ref) => true);
+
+StateProvider qrCodeScannedData = StateProvider((ref) => null);
