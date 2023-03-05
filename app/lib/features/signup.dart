@@ -52,7 +52,7 @@ class Signup extends StatelessWidget {
                 ),
                 child: const Center(
                   child: Text(
-                    "Login",
+                    "Signup",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18,
