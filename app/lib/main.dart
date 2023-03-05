@@ -1,3 +1,4 @@
+import 'package:event_tracker/features/login.dart';
 import 'package:event_tracker/features/take-ticket.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
             theme: ThemeData(
               primarySwatch: Colors.blue,
             ),
-            home: const TakeTicket(),
+            home: const Login(),
           );
         });
   }
