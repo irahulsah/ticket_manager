@@ -31,7 +31,7 @@ class TicketModel {
         name: json["name"],
         ticketId: json["ticketId"],
         createdAt: json["createdAt"],
-        event: json["event"]["name"],
+        event: json["event"] == null ? "" : json["event"]["name"],
         // tickerId: json["ticket_id"],
       );
 
