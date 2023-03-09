@@ -1,7 +1,12 @@
+import 'dart:developer';
+
 import 'package:event_tracker/controller/qr_generator.controller.dart';
 import 'package:event_tracker/domain/ticket.model.dart';
+import 'package:event_tracker/features/drop_down.dart';
+import 'package:event_tracker/features/events_drop_down.dart';
 import 'package:event_tracker/networking.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class ScannedTickets extends ConsumerStatefulWidget {
@@ -12,6 +17,7 @@ class ScannedTickets extends ConsumerStatefulWidget {
 }
 
 class _ScannedTicketstate extends ConsumerState<ScannedTickets> {
+  final DioClient client = DioClient();
   @override
   void initState() {
     // TODO: implement initState
@@ -20,11 +26,25 @@ class _ScannedTicketstate extends ConsumerState<ScannedTickets> {
   }
 
   fetchAllScannedQr() async {
-    final DioClient client = DioClient();
-    final resp = await client.get();
-    ref.read(scannedQrList.notifier).state =
-        resp.map((res) => TicketModel.fromJson(res)).toList();
-    ref.read(scannedQrListLoading.notifier).state = false;
+    try {
+      final resp = await client.getTicket();
+      ref.read(scannedQrList.notifier).state =
+          resp.map((res) => TicketModel.fromJson(res)).toList();
+      ref.read(scannedQrListLoading.notifier).state = false;
+    } catch (e) {
+      log("$e e thhs");
+    }
+  }
+
+  onChange(event) async {
+    try {
+      final resp = await client.getTicket(event: event);
+      ref.read(scannedQrList.notifier).state =
+          resp.map((res) => TicketModel.fromJson(res)).toList();
+      ref.read(scannedQrListLoading.notifier).state = false;
+    } catch (e) {
+      log("$e e thhs");
+    }
   }
 
   @override
@@ -40,7 +60,7 @@ class _ScannedTicketstate extends ConsumerState<ScannedTickets> {
           ),
         ),
         centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: const Color.fromARGB(255, 156, 226, 247),
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -54,16 +74,32 @@ class _ScannedTicketstate extends ConsumerState<ScannedTickets> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    ...ticketList
-                        .map((ticket) => ticketCard(
-                            ticket.ticketId,
-                            DateTime.parse(ticket.createdAt)
-                                .toIso8601String()
-                                .split("T")[0],
-                            StringExtension.displayTimeAgoFromTimestamp(
-                                ticket.createdAt),
-                            ticket.event))
-                        .toList()
+                    Container(
+                        margin: EdgeInsets.only(bottom: 20.h),
+                        alignment: Alignment.topRight,
+                        child: EventsDropDownField(
+                          onChange: onChange,
+                        )),
+                    ticketList.isEmpty
+                        ? Container(
+                            margin: EdgeInsets.only(top: 30.h),
+                            alignment: Alignment.center,
+                            child: Text(
+                              "No tickets generated",
+                              style: TextStyle(fontSize: 20.sp),
+                            ))
+                        : Column(children: [
+                            ...ticketList
+                                .map((ticket) => ticketCard(
+                                    ticket.ticketId,
+                                    DateTime.parse(ticket.createdAt)
+                                        .toIso8601String()
+                                        .split("T")[0],
+                                    StringExtension.displayTimeAgoFromTimestamp(
+                                        ticket.createdAt),
+                                    ticket.event))
+                                .toList()
+                          ])
                   ],
                 ),
               ),

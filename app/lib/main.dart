@@ -1,11 +1,15 @@
+import 'package:event_tracker/features/login.dart';
 import 'package:event_tracker/features/show_scanned_qr_details.dart';
+import 'package:event_tracker/features/splash_screen.dart';
 import 'package:event_tracker/features/take-ticket.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await GetStorage.init();
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -26,7 +30,7 @@ class MyApp extends StatelessWidget {
             theme: ThemeData(
               primarySwatch: Colors.blue,
             ),
-            home: const TakeTicket(),
+            home: const SplashScreen(),
             routes: {
               "qr_detail_page": (context) => const ScannedQrCodeDetails()
             },

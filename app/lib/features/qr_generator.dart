@@ -7,7 +7,7 @@ import 'dart:ui';
 import 'package:event_tracker/controller/qr_generator.controller.dart';
 import 'package:event_tracker/domain/ticket.model.dart';
 import 'package:event_tracker/features/drop_down.dart';
-import 'package:event_tracker/features/take-ticket-form-field.dart';
+import 'package:event_tracker/features/event_create.screen.dart';
 import 'package:event_tracker/features/toast.dart';
 import 'package:event_tracker/networking.dart';
 import 'package:event_tracker/utils/utils.dart';
@@ -167,7 +167,13 @@ class QrGeneratorScreen extends ConsumerWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Event Manager")),
+      appBar: AppBar(
+        title: const Text(
+          "Event Manager",
+          style: TextStyle(color: Colors.black),
+        ),
+        backgroundColor: Color.fromARGB(255, 156, 226, 247),
+      ),
       body: ListView(
         controller: controller,
         children: [
@@ -193,7 +199,7 @@ class QrGeneratorScreen extends ConsumerWidget {
                 ),
                 child: const Center(
                   child: Text(
-                    "Take Ticket",
+                    "Create Event",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 12,
@@ -358,9 +364,14 @@ class QrGeneratorScreen extends ConsumerWidget {
         "uniqueUUid": randomQrUuid[index]
       });
     }
-    await client.create(newFilterUserData);
-    ref.read(loadingProvider.notifier).state = false;
-    // ignore: use_build_context_synchronously
-    alertDialog(context);
+    try {
+      await client.createTickets(newFilterUserData);
+      ref.read(loadingProvider.notifier).state = false;
+      // ignore: use_build_context_synchronously
+      alertDialog(context);
+    } catch (e) {
+      ref.read(loadingProvider.notifier).state = false;
+      CustomScaffoldMessenger.error("Invalid Credentails", context);
+    }
   }
 }

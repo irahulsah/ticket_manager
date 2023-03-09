@@ -1,6 +1,12 @@
+import 'dart:developer';
+
 import 'package:event_tracker/features/signup.dart';
+import 'package:event_tracker/features/take-ticket.dart';
+import 'package:event_tracker/features/toast.dart';
+import 'package:event_tracker/networking.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class Login extends ConsumerStatefulWidget {
@@ -11,6 +17,8 @@ class Login extends ConsumerStatefulWidget {
 }
 
 class _LoginState extends ConsumerState<Login> {
+  // GlobalKey<FormState> formKey = GlobalKey();
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   @override
@@ -33,80 +41,116 @@ class _LoginState extends ConsumerState<Login> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
-          child: Column(
-            // crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Center(
-                child: Image.asset(
-                  "assets/images/ticket.jpg",
-                  height: 100.h,
-                ),
-              ),
-              Center(
-                child: Text(
-                  "Ticket Manager",
-                  style: TextStyle(
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              SizedBox(height: 80.h),
-              // Text(
-              //   "Login to your\naccount",
-              //   style: TextStyle(
-              //     fontSize: 28.sp,
-              //     fontWeight: FontWeight.bold,
-              //   ),
-              // ),
-              // SizedBox(height: 80.h),
-
-              inputField(emailController, false, "Enter email"), //Email TextBox
-
-              inputField(passwordController, false,
-                  "Enter password"), //Password TextBox
-
-              //Login button
-              Container(
-                height: 50,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 55, 89, 117),
-                  borderRadius: BorderRadius.circular(18),
-                ),
-                child: const Center(
-                  child: Text(
-                    "Login",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+        child: SingleChildScrollView(
+          child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+              child: Form(
+                key: formKey,
+                child: Column(
+                  // crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Center(
+                      child: Image.asset(
+                        "assets/images/ticket.jpg",
+                        height: 100.h,
+                      ),
                     ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 20.h),
-              InkWell(
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => Signup(),
+                    Center(
+                      child: Text(
+                        "Ticket Manager",
+                        style: TextStyle(
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
-                  );
-                },
-                child: Text(
-                  "New User? Signup",
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
+                    SizedBox(height: 80.h),
+                    // Text(
+                    //   "Login to your\naccount",
+                    //   style: TextStyle(
+                    //     fontSize: 28.sp,
+                    //     fontWeight: FontWeight.bold,
+                    //   ),
+                    // ),
+                    // SizedBox(height: 80.h),
+
+                    inputField(
+                        emailController, false, "Enter email"), //Email TextBox
+
+                    inputField(passwordController, false,
+                        "Enter password"), //Password TextBox
+
+                    //Login button
+                    GestureDetector(
+                      onTap: () async {
+                        final form = formKey.currentState;
+                        if (form!.validate()) {
+                          final DioClient client = DioClient();
+                          try {
+                            final loginresp = await client.login({
+                              "email": emailController.text,
+                              "password": passwordController.text
+                            });
+                            if (context.mounted) {
+                              final box = GetStorage();
+                              box.write(
+                                  "accessToken", loginresp["accessToken"]);
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => const TakeTicket(),
+                                ),
+                              );
+                              log("loginresp $loginresp");
+                            }
+                          } catch (e) {
+                            log("e $e");
+                            CustomScaffoldMessenger.error(
+                                "Invalid Credentails", context);
+                          }
+                        } else {
+                          print('Form is invalid');
+                        }
+                      },
+                      child: Container(
+                        height: 50,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 55, 89, 117),
+                          borderRadius: BorderRadius.circular(18),
+                        ),
+                        child: const Center(
+                          child: Text(
+                            "Login",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20.h),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => Signup(),
+                          ),
+                        );
+                      },
+                      child: Text(
+                        "New User? Signup",
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
+              )),
         ),
       ),
     );

@@ -1,9 +1,11 @@
+import 'package:event_tracker/features/login.dart';
 import 'package:event_tracker/features/qr_generator.dart';
 import 'package:event_tracker/features/scan_qr.dart';
 import 'package:event_tracker/features/scanned-tickers.dart';
-import 'package:event_tracker/features/take-ticket-form-field.dart';
+import 'package:event_tracker/features/event_create.screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get_storage/get_storage.dart';
 
 class TakeTicket extends StatelessWidget {
   const TakeTicket({super.key});
@@ -18,8 +20,28 @@ class TakeTicket extends StatelessWidget {
             color: Colors.black,
           ),
         ),
+        actions: [
+          IconButton(
+              onPressed: () {
+                final box = GetStorage();
+                box.remove("accessToken");
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const Login(),
+                  ),
+                );
+              },
+              icon: Icon(
+                Icons.logout,
+                size: 20,
+                color: Colors.black,
+              )),
+          SizedBox(
+            width: 5.w,
+          )
+        ],
         centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: Color.fromARGB(255, 156, 226, 247),
         elevation: 0,
       ),
       body: Column(
@@ -38,7 +60,7 @@ class TakeTicket extends StatelessWidget {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => ScanQrPage(),
+                    builder: (context) => const ScanQrPage(),
                   ),
                 );
               },

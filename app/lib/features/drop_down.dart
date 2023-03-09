@@ -14,7 +14,6 @@ class DropDownField extends ConsumerStatefulWidget {
 
 class _DropDownFieldtate extends ConsumerState<DropDownField> {
   String? dropDownIndex;
-  var dropDownList = ["Delete", "Change", "Remove", "Save"];
   bool isLoading = false;
   @override
   void initState() {
@@ -43,7 +42,6 @@ class _DropDownFieldtate extends ConsumerState<DropDownField> {
   Widget build(BuildContext context) {
     final isLoading = ref.read(isLoadingProvider);
     final events = ref.read(eventDataProvider);
-    log("$events    shshsh");
     return isLoading
         ? Center(
             child: CircularProgressIndicator(),
