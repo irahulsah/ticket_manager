@@ -160,7 +160,13 @@ class _LoginState extends ConsumerState<Login> {
       TextEditingController controller, bool? isObscure, String labelText) {
     return Container(
       margin: EdgeInsets.only(bottom: 15.h),
-      child: TextField(
+      child: TextFormField(
+        validator: (dynamic value) {
+          if (value?.isEmpty) {
+            return "$labelText is required.";
+          }
+          return null;
+        },
         controller: controller,
         style: TextStyle(
           // color: Theme.of(context).colorScheme.outline,

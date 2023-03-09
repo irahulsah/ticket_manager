@@ -124,7 +124,13 @@ class _TakeTicketFormPageState extends State<TakeTicketFormPage> {
         const SizedBox(
           height: 10,
         ),
-        TextField(
+        TextFormField(
+          validator: (dynamic value) {
+            if (value?.isEmpty) {
+              return "Event Name is required.";
+            }
+            return null;
+          },
           controller: controller,
           style: const TextStyle(
             fontSize: 18,

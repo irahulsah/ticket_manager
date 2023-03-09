@@ -7,8 +7,8 @@ class DioClient {
   final dio.Dio _dio = dio.Dio();
   final box = GetStorage();
 
-  final _baseUrl = 'http://192.168.2.100:3000';
-  // final _baseUrl = 'http://18.217.135.195:3000';
+  // final _baseUrl = 'http://192.168.2.100:3000';
+  final _baseUrl = 'http://18.217.135.195:3000';
 
   // TODO: Add methods
 
