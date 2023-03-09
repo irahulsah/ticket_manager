@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node  src/index.js",
+    "dev": "nodemon  src/index.js",
     "test": "echo \"No test specified\" && exit 0"
   },
   "keywords": [],
@@ -14,12 +15,15 @@
     "@babel/core": "^7.9.0",
     "@babel/node": "^7.8.7",
     "@babel/preset-env": "^7.9.5",
-    "nodemon": "^2.0.3"
+    "nodemon": "^2.0.21"
   },
   "dependencies": {
+    "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "jsonwebtoken": "^9.0.0",
+    "lodash": "^4.17.21",
     "mongoose": "^5.9.10",
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.1"

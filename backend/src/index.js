@@ -5,6 +5,7 @@ require('dotenv/config');
 const   {connectDb}  = require('./models');
 const  {models} = require('./models');
 const  routes = require('./routes');
+const  middleareAuth = require('./middleware');
 
 const app = express();
 
@@ -25,17 +26,16 @@ app.use('/uploads', express.static('uploads'));
 app.use(async (req, res, next) => {
   req.context = {
     models,
-    me: await models.User.findByLogin('rwieruch'),
   };
   next();
 });
 
 // * Routes * //
 
-app.use('/session', routes.session);
-app.use('/users', routes.user);
-app.use('/tickets', routes.tickets);
-app.use('/events', routes.events);
+app.use('/session',middleareAuth, routes.session);
+app.use('/users',routes.auth);
+app.use('/tickets',middleareAuth, routes.tickets);
+app.use('/events',middleareAuth, routes.events);
 
 // * Start * //
 

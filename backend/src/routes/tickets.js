@@ -49,16 +49,14 @@ const sendMail = (body) => {
 const router = Router();
 
 router.get("/", async (req, res) => {
-  const messages = await req.context.models.Ticket.find({isActive: false}).populate('event');
-  return res.send(messages);
+  let body = {isActive: false, user: req.auth._id}
+  if(req.query.event && req.query.event !== "null") {
+    body["event"] = req.query.event;
+  }
+  const tickets = await req.context.models.Ticket.find(body).populate('event');
+  return res.send(tickets);
 });
 
-router.get("/:messageId", async (req, res) => {
-  const message = await req.context.models.Ticket.findById(
-    req.params.messageId
-  );
-  return res.send(message);
-});
 
 router.post("/", async (req, res) => {
   const lastTicket = await req.context.models.Ticket.countDocuments();
@@ -66,6 +64,7 @@ router.post("/", async (req, res) => {
     req.body.map((tic, idx) => ({
       ...tic,
       ticketId: process.env.TICKET_ID + (lastTicket + idx),
+      user: req.auth._id,
     }))
   );
   sendMail(req.body);

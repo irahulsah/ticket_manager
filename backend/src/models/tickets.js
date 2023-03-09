@@ -26,6 +26,11 @@ const ticketSchema = new mongoose.Schema({
     ref: "Event",
     required: true,
   },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
   isActive: {
     type: Boolean,
     required: false,

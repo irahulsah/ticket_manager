@@ -1,28 +1,38 @@
 const mongoose = require('mongoose');
+const {omit} = require('lodash');
+const jwt = require('jsonwebtoken');
 
 
 const userSchema = new mongoose.Schema({
-  username: {
+  email: {
     type: String,
-    unique: true,
+    required: true,
+    unique: true
+  },
+  firstName: {
+    type: String,
+    required: true,
+  },
+  lastName: {
+    type: String,
+    required: true,
+  },
+  gender: {
+    type: String,
+    // required: true,
+  },
+  password: {
+    type: String,
+    required: true,
   },
 });
 
-userSchema.statics.findByLogin = async function(login) {
-  let user = await this.findOne({
-    username: login,
-  });
-
-  if (!user) {
-    user = await this.findOne({ email: login });
-  }
-
-  return user;
-};
-
-userSchema.pre('remove', function(next) {
-  this.model('Message').deleteMany({ user: this._id }, next);
-});
+userSchema.methods.generateToken = function () {
+  return jwt.sign(
+    omit(this.toJSON(), ["password", "__v", "fullName"]),
+    process.env.JWT_SECRET
+  );
+}
 
 const User = mongoose.model('User', userSchema);
 
