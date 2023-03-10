@@ -10,8 +10,6 @@ class DioClient {
   // final _baseUrl = 'http://192.168.2.100:3000';
   final _baseUrl = 'http://18.217.135.195:3000';
 
-  // TODO: Add methods
-
   Future<dynamic> uploadImages(files) async {
     // Perform GET request to the endpoint "/users/<id>"
 
@@ -46,6 +44,19 @@ class DioClient {
     _dio.options.headers['Content-Type'] = 'application/json';
     dynamic userData = await _dio.post("$_baseUrl/users/signup", data: data);
     return userData.data;
+  }
+
+  Future<dynamic> getScannedTicketCount({event}) async {
+    _dio.options.headers['token'] = box.read("accessToken");
+    dynamic resp = await _dio.get("$_baseUrl/tickets/scanned-ticket-count");
+    return resp.data;
+  }
+
+  Future<dynamic> getScannedTicketPercentage({event}) async {
+    _dio.options.headers['token'] = box.read("accessToken");
+    dynamic resp =
+        await _dio.get("$_baseUrl/tickets/scanned-ticket-percentage");
+    return resp.data;
   }
 
   Future<dynamic> getTicket({event}) async {

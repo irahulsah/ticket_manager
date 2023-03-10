@@ -31,6 +31,13 @@ const ticketSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
+  scanned_by: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
+  seatNumber: {
+    type: String,
+  },
   isActive: {
     type: Boolean,
     required: false,

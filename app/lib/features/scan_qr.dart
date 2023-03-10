@@ -1,7 +1,4 @@
 import 'dart:io';
-import 'dart:developer';
-import 'package:event_tracker/controller/qr_generator.controller.dart';
-import 'package:event_tracker/features/toast.dart';
 import 'package:event_tracker/networking.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -79,6 +76,14 @@ class _ScanQrPagetate extends ConsumerState<ScanQrPage> {
                       height: 10.h,
                     ),
                     Text(
+                      "Seat Number: ${updatedData["seatNumber"]}",
+                      style: TextStyle(
+                          fontSize: 15.sp, fontWeight: FontWeight.w400),
+                    ),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    Text(
                       "Customer Name: ${updatedData["name"]}",
                       style: TextStyle(
                           fontSize: 15.sp, fontWeight: FontWeight.w400),
@@ -134,7 +139,7 @@ class _ScanQrPagetate extends ConsumerState<ScanQrPage> {
                         height: 50,
                       ),
                       SizedBox(height: 20.h),
-                      Text(
+                      const Text(
                         "Ticket is expired.",
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.w400),

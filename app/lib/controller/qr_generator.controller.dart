@@ -1,4 +1,3 @@
-import 'package:event_tracker/domain/ticket.model.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 StateProvider excelFileProvider = StateProvider((ref) => null);
@@ -11,6 +10,8 @@ StateProvider randomQrUuidProvider = StateProvider((ref) => []);
 
 //
 StateProvider scannedQrList = StateProvider((ref) => []);
+StateProvider scannedCountProvider = StateProvider((ref) => 0);
+StateProvider scannedPercentageProvider = StateProvider((ref) => 0);
 StateProvider scannedQrListLoading = StateProvider((ref) => true);
 
 StateProvider qrCodeScannedData = StateProvider((ref) => null);

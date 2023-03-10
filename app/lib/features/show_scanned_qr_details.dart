@@ -1,6 +1,4 @@
 import 'package:event_tracker/controller/qr_generator.controller.dart';
-import 'package:event_tracker/domain/ticket.model.dart';
-import 'package:event_tracker/networking.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -19,7 +17,6 @@ class ScannedQrCodeDetails extends ConsumerStatefulWidget {
 class _ScannedQrCodeDetailstate extends ConsumerState<ScannedQrCodeDetails> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -70,13 +67,13 @@ class _ScannedQrCodeDetailstate extends ConsumerState<ScannedQrCodeDetails> {
       decoration: BoxDecoration(
           color: const Color.fromARGB(255, 243, 242, 237),
           borderRadius: BorderRadius.circular(14),
-          boxShadow: [
-            const BoxShadow(
+          boxShadow: const [
+            BoxShadow(
               spreadRadius: 4,
               blurRadius: 3,
               color: Colors.grey,
             ),
-            const BoxShadow(
+            BoxShadow(
               spreadRadius: 4,
               blurRadius: 3,
               color: Colors.green,
@@ -97,7 +94,7 @@ class _ScannedQrCodeDetailstate extends ConsumerState<ScannedQrCodeDetails> {
                   ),
                 ),
                 Text(
-                  "Date: ${date}",
+                  "Date: $date",
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w400,
@@ -156,9 +153,9 @@ extension StringExtension on String {
       timeUnit = 'year';
     }
 
-    timeAgo = timeValue.toString() + ' ' + timeUnit;
+    timeAgo = '$timeValue $timeUnit';
     timeAgo += timeValue > 1 ? 's' : '';
 
-    return timeAgo + ' ago';
+    return '$timeAgo ago';
   }
 }

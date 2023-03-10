@@ -45,6 +45,10 @@ dependencies:
   dio: ^5.0.1
   qr_code_scanner: ^1.0.1
   get_storage: ^2.1.1
+  syncfusion_flutter_gauges: ^20.4.53
+  syncfusion_localizations: ^20.4.53
+  flutter_localizations:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:

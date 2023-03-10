@@ -1,7 +1,8 @@
 import 'dart:developer';
 
+import 'package:event_tracker/controller/qr_generator.controller.dart';
 import 'package:event_tracker/features/signup.dart';
-import 'package:event_tracker/features/take-ticket.dart';
+import 'package:event_tracker/features/take_ticket.dart';
 import 'package:event_tracker/features/toast.dart';
 import 'package:event_tracker/networking.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +24,6 @@ class _LoginState extends ConsumerState<Login> {
   TextEditingController passwordController = TextEditingController();
   @override
   void initState() {
-    // TODO: implement initState
     emailController = TextEditingController();
     passwordController = TextEditingController();
     super.initState();
@@ -31,7 +31,6 @@ class _LoginState extends ConsumerState<Login> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
@@ -39,6 +38,7 @@ class _LoginState extends ConsumerState<Login> {
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = ref.watch(isLoadingProvider);
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -86,6 +86,7 @@ class _LoginState extends ConsumerState<Login> {
                       onTap: () async {
                         final form = formKey.currentState;
                         if (form!.validate()) {
+                          ref.read(isLoadingProvider.notifier).state = true;
                           final DioClient client = DioClient();
                           try {
                             final loginresp = await client.login({
@@ -96,6 +97,9 @@ class _LoginState extends ConsumerState<Login> {
                               final box = GetStorage();
                               box.write(
                                   "accessToken", loginresp["accessToken"]);
+                              ref.read(isLoadingProvider.notifier).state =
+                                  false;
+
                               Navigator.of(context).push(
                                 MaterialPageRoute(
                                   builder: (context) => const TakeTicket(),
@@ -105,12 +109,11 @@ class _LoginState extends ConsumerState<Login> {
                             }
                           } catch (e) {
                             log("e $e");
+                            ref.read(isLoadingProvider.notifier).state = false;
                             CustomScaffoldMessenger.error(
                                 "Invalid Credentails", context);
                           }
-                        } else {
-                          print('Form is invalid');
-                        }
+                        } else {}
                       },
                       child: Container(
                         height: 50,
@@ -119,14 +122,27 @@ class _LoginState extends ConsumerState<Login> {
                           color: const Color.fromARGB(255, 55, 89, 117),
                           borderRadius: BorderRadius.circular(18),
                         ),
-                        child: const Center(
-                          child: Text(
-                            "Login",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
+                        child: Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Text(
+                                "Login",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 5.w,
+                              ),
+                              Visibility(
+                                visible: isLoading,
+                                child: const CircularProgressIndicator(),
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -136,7 +152,7 @@ class _LoginState extends ConsumerState<Login> {
                       onTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => Signup(),
+                            builder: (context) => const Signup(),
                           ),
                         );
                       },

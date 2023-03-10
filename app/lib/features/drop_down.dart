@@ -17,7 +17,6 @@ class _DropDownFieldtate extends ConsumerState<DropDownField> {
   bool isLoading = false;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       fetchData();
@@ -43,7 +42,7 @@ class _DropDownFieldtate extends ConsumerState<DropDownField> {
     final isLoading = ref.read(isLoadingProvider);
     final events = ref.read(eventDataProvider);
     return isLoading
-        ? Center(
+        ? const Center(
             child: CircularProgressIndicator(),
           )
         : DropdownButton(

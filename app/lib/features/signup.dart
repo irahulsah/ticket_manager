@@ -1,11 +1,9 @@
-import 'dart:developer';
-
+import 'package:event_tracker/controller/qr_generator.controller.dart';
 import 'package:event_tracker/features/login.dart';
 import 'package:event_tracker/features/toast.dart';
 import 'package:event_tracker/networking.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class Signup extends ConsumerStatefulWidget {
@@ -23,6 +21,7 @@ class _SignupState extends ConsumerState<Signup> {
     TextEditingController lastNameController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
     TextEditingController firstNameController = TextEditingController();
+    final isLoading = ref.watch(isLoadingProvider);
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -64,15 +63,19 @@ class _SignupState extends ConsumerState<Signup> {
                     onTap: () async {
                       final form = formKey.currentState;
                       if (form!.validate()) {
+                        ref.read(isLoadingProvider.notifier).state = true;
+
                         final DioClient client = DioClient();
                         try {
-                          final loginresp = await client.signup({
+                          await client.signup({
                             "email": emailController.text,
                             "password": passwordController.text,
                             "firstName": firstNameController.text,
                             "lastName": lastNameController.text,
                           });
                           if (context.mounted) {
+                            ref.read(isLoadingProvider.notifier).state = false;
+
                             CustomScaffoldMessenger.sucess(
                                 "Your Account is created.Please login",
                                 context);
@@ -84,11 +87,10 @@ class _SignupState extends ConsumerState<Signup> {
                             );
                           }
                         } catch (e) {
+                          ref.read(isLoadingProvider.notifier).state = false;
                           CustomScaffoldMessenger.error(e.toString(), context);
                         }
-                      } else {
-                        print('Form is invalid');
-                      }
+                      } else {}
                     },
                     child: Container(
                       height: 50,
@@ -97,14 +99,27 @@ class _SignupState extends ConsumerState<Signup> {
                         color: const Color.fromARGB(255, 55, 89, 117),
                         borderRadius: BorderRadius.circular(18),
                       ),
-                      child: const Center(
-                        child: Text(
-                          "Signup",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      child: Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Text(
+                              "Signup",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(
+                              width: 5.w,
+                            ),
+                            Visibility(
+                              visible: isLoading,
+                              child: const CircularProgressIndicator(),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -115,7 +130,7 @@ class _SignupState extends ConsumerState<Signup> {
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => Login(),
+                          builder: (context) => const Login(),
                         ),
                       );
                     },

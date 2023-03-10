@@ -1,6 +1,4 @@
 import 'package:event_tracker/features/qr_generator.dart';
-import 'package:event_tracker/features/scanned-tickers.dart';
-import 'package:event_tracker/features/toast.dart';
 import 'package:event_tracker/networking.dart';
 import 'package:flutter/material.dart';
 
@@ -17,7 +15,6 @@ class _TakeTicketFormPageState extends State<TakeTicketFormPage> {
   TextEditingController _eventsController = TextEditingController();
   @override
   void initState() {
-    // TODO: implement initState
     _scannedByController = TextEditingController();
     _eventsController = TextEditingController();
     super.initState();
@@ -25,7 +22,6 @@ class _TakeTicketFormPageState extends State<TakeTicketFormPage> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     _scannedByController.dispose();
     super.dispose();
   }
@@ -35,24 +31,26 @@ class _TakeTicketFormPageState extends State<TakeTicketFormPage> {
       isLoading = true;
     });
     final DioClient client = DioClient();
-    final updatedData =
-        await client.createEvent({"name": _eventsController.text});
+
+    await client.createEvent({"name": _eventsController.text});
     // ignore: use_build_context_synchronously
     setState(() {
       isLoading = false;
     });
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const QrGeneratorScreen(),
-      ),
-    );
+    if (context.mounted) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => const QrGeneratorScreen(),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 156, 226, 247),
+        backgroundColor: const Color.fromARGB(255, 156, 226, 247),
         title: const Text(
           "Event Creator Page",
           style: TextStyle(
@@ -88,7 +86,7 @@ class _TakeTicketFormPageState extends State<TakeTicketFormPage> {
                 height: 40,
                 width: 150,
                 decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 156, 226, 247),
+                  color: const Color.fromARGB(255, 156, 226, 247),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Center(
@@ -115,7 +113,7 @@ class _TakeTicketFormPageState extends State<TakeTicketFormPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "$hintText",
+          hintText,
           style: const TextStyle(
             color: Colors.black,
             fontSize: 18,

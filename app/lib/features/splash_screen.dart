@@ -1,12 +1,6 @@
-import 'dart:developer';
-
 import 'package:event_tracker/features/login.dart';
-import 'package:event_tracker/features/signup.dart';
-import 'package:event_tracker/features/take-ticket.dart';
-import 'package:event_tracker/features/toast.dart';
-import 'package:event_tracker/networking.dart';
+import 'package:event_tracker/features/take_ticket.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -21,7 +15,6 @@ class SplashScreen extends ConsumerStatefulWidget {
 class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final box = GetStorage();
@@ -48,7 +41,21 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       body: SafeArea(
           child: Center(
               // padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
-              child: const Text("Welcome to ticket manager"))),
+              child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            "assets/images/ticket.jpg",
+            height: 25.h,
+            width: 25.w,
+          ),
+          Text(
+            "Welcome to ticket manager",
+            style: TextStyle(fontSize: 22.sp),
+          ),
+        ],
+      ))),
     );
   }
 }

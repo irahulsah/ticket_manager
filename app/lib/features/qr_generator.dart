@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
@@ -38,8 +37,6 @@ class QrGeneratorScreen extends ConsumerWidget {
     final exampleImg = ref.watch(exampleImages);
     final isLoading = ref.watch(loadingProvider);
 
-    TextEditingController textEditingController =
-        TextEditingController(text: "");
     ScrollController controller = ScrollController();
 
     Future<List<dynamic>> loadAsset(String path) async {
@@ -59,6 +56,7 @@ class QrGeneratorScreen extends ConsumerWidget {
             rawData.add(TicketModel.fromJson({
               "name": element[1].toString(),
               "email": element[0].toString(),
+              "seatNumber": element[2].toString(),
             }));
           }
         }
@@ -95,42 +93,46 @@ class QrGeneratorScreen extends ConsumerWidget {
             500;
         qrCodes.add(RepaintBoundary(
             key: key,
-            child: Column(children: [
-              SizedBox(
-                height: 10.h,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                      width: 30.w,
-                      height: 30.h,
-                      child: Image.asset(
-                        "assets/images/ticket.jpg",
-                      )),
-                  SizedBox(
-                    width: 2.h,
-                  ),
-                  Text(
-                      "Ticket ${(extractedData.indexOf(element) + 1).toString()}",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blueAccent)),
-                ],
-              ),
-              SizedBox(
-                height: 5.h,
-              ),
-              QrImage(
-                data:
-                    "Ticket Booking $uuidRandom\nName: ${element.name}\nEmail: ${element.email}",
-                version: QrVersions.auto,
-                size: 320,
-                gapless: false,
-              )
-            ])));
+            child: Container(
+              color: Colors.white,
+              child: Column(children: [
+                SizedBox(
+                  height: 10.h,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                        width: 30.w,
+                        height: 30.h,
+                        child: Image.asset(
+                          "assets/images/ticket.jpg",
+                        )),
+                    SizedBox(
+                      width: 2.h,
+                    ),
+                    Text(
+                        "Ticket ${(extractedData.indexOf(element) + 1).toString()}",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blueAccent)),
+                  ],
+                ),
+                SizedBox(
+                  height: 5.h,
+                ),
+                QrImage(
+                  data:
+                      "Ticket Booking $uuidRandom\nName: ${element.name}\nEmail: ${element.email}\nseatNumber: ${element.seatNumber}",
+                  version: QrVersions.auto,
+                  backgroundColor: Colors.white,
+                  size: 320,
+                  gapless: false,
+                )
+              ]),
+            )));
         keys.add(key);
         randomQrUuid.add(uuidRandom);
       }
@@ -167,13 +169,13 @@ class QrGeneratorScreen extends ConsumerWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Event Manager",
-          style: TextStyle(color: Colors.black),
-        ),
-        backgroundColor: Color.fromARGB(255, 156, 226, 247),
-      ),
+      // appBar: AppBar(
+      //   title: const Text(
+      //     "Event Manager",
+      //     style: TextStyle(color: Colors.black),
+      //   ),
+      //   backgroundColor: Color.fromARGB(255, 156, 226, 247),
+      // ),
       body: ListView(
         controller: controller,
         children: [
@@ -264,8 +266,30 @@ class QrGeneratorScreen extends ConsumerWidget {
                             (e) => ListTile(
                               leading: CircleAvatar(
                                   child: Text(e.name[0].toUpperCase())),
-                              title: Text(e.name),
-                              subtitle: Text(e.email),
+                              title: Text(
+                                e.name,
+                                style: TextStyle(
+                                    fontSize: 18.sp,
+                                    fontWeight: FontWeight.w400),
+                              ),
+                              subtitle: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    e.email,
+                                    style: TextStyle(fontSize: 15.sp),
+                                  ),
+                                  SizedBox(
+                                    height: 5.h,
+                                  ),
+                                  if (e.seatNumber != "")
+                                    Text(
+                                      "Seat: ${e.seatNumber}",
+                                      style: TextStyle(fontSize: 15.sp),
+                                    )
+                                ],
+                              ),
                             ),
                           )
                           .toList(),

@@ -6,9 +6,9 @@ class CustomScaffoldMessenger {
       behavior: SnackBarBehavior.floating,
       content: Row(
         children: [
-          Padding(
+          const Padding(
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            child: const Icon(
+            child: Icon(
               Icons.error,
               color: Colors.white,
             ),
@@ -33,9 +33,9 @@ class CustomScaffoldMessenger {
       behavior: SnackBarBehavior.floating,
       content: Row(
         children: [
-          Padding(
+          const Padding(
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            child: const Icon(
+            child: Icon(
               Icons.info,
               color: Colors.white,
             ),
@@ -70,9 +70,9 @@ class CustomScaffoldMessenger {
           : null,
       content: Row(
         children: [
-          Padding(
+          const Padding(
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            child: const Icon(
+            child: Icon(
               Icons.check,
               color: Colors.white,
             ),
