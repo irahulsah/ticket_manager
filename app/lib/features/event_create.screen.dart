@@ -1,15 +1,18 @@
-import 'package:event_tracker/features/qr_generator.dart';
+import 'dart:developer';
+
+import 'package:event_tracker/controller/qr_generator.controller.dart';
 import 'package:event_tracker/networking.dart';
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class TakeTicketFormPage extends StatefulWidget {
+class TakeTicketFormPage extends ConsumerStatefulWidget {
   const TakeTicketFormPage({super.key});
 
   @override
-  State<TakeTicketFormPage> createState() => _TakeTicketFormPageState();
+  ConsumerState<TakeTicketFormPage> createState() => _TakeTicketFormPagetate();
 }
 
-class _TakeTicketFormPageState extends State<TakeTicketFormPage> {
+class _TakeTicketFormPagetate extends ConsumerState<TakeTicketFormPage> {
   TextEditingController _scannedByController = TextEditingController();
   bool isLoading = false;
   TextEditingController _eventsController = TextEditingController();
@@ -32,17 +35,16 @@ class _TakeTicketFormPageState extends State<TakeTicketFormPage> {
     });
     final DioClient client = DioClient();
 
-    await client.createEvent({"name": _eventsController.text});
+    final respData = await client.createEvent({"name": _eventsController.text});
     // ignore: use_build_context_synchronously
     setState(() {
       isLoading = false;
     });
     if (context.mounted) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => const QrGeneratorScreen(),
-        ),
-      );
+      final previousData = ref.watch(eventDataProvider);
+      log("$previousData $respData");
+      ref.read(eventDataProvider.notifier).state = [...previousData, respData];
+      Navigator.of(context).pop();
     }
   }
 

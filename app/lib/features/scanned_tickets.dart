@@ -63,6 +63,7 @@ class _ScannedTicketstate extends ConsumerState<ScannedTickets> {
   /// Returns the marker pointer gauge
   SfRadialGauge _buildMarkerPointerExample() {
     final scannedPercentage = ref.watch(scannedPercentageProvider);
+    log("scannedPercentage $scannedPercentage");
     return SfRadialGauge(
       title: GaugeTitle(
           text: "Tickets Scanned",
@@ -81,7 +82,9 @@ class _ScannedTicketstate extends ConsumerState<ScannedTickets> {
             showAxisLine: false,
             pointers: <GaugePointer>[
               MarkerPointer(
-                  value: double.parse(scannedPercentage.toString()),
+                  value: scannedPercentage == "NaN"
+                      ? 0
+                      : double.parse(scannedPercentage.toString()),
                   elevation: 4,
                   markerWidth: 25,
                   markerHeight: 25,
@@ -100,7 +103,7 @@ class _ScannedTicketstate extends ConsumerState<ScannedTickets> {
                   angle: 270,
                   positionFactor: 0.1,
                   widget: Text(
-                      '${double.parse(scannedPercentage.toString()).toStringAsFixed(2)}%',
+                      '${scannedPercentage == "NaN" ? 0 : double.parse(scannedPercentage.toString()).toStringAsFixed(2)}%',
                       style: const TextStyle(
                           fontSize: 12, fontWeight: FontWeight.bold))),
               const GaugeAnnotation(

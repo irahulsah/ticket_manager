@@ -20,9 +20,12 @@ class TakeTicket extends ConsumerWidget {
         title: Row(
           children: [
             Image.asset(
-              "assets/images/ticket.jpg",
+              "assets/images/logo.png",
               height: 25.h,
               width: 25.w,
+            ),
+            SizedBox(
+              width: 3.w,
             ),
             Text(
               bottomNavWidgets[currentIndex]["title"],

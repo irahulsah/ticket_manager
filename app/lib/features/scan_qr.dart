@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:developer';
 import 'package:event_tracker/networking.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -22,7 +23,45 @@ class _ScanQrPagetate extends ConsumerState<ScanQrPage> {
     setState(() => this.controller = controller);
     controller.scannedDataStream.listen((scanData) async {
       setState(() => result = scanData);
+      if (!scanData.code!.split("\n")[0].split(" ")[0].contains("Ticket") &&
+          !scanData.code!.split("\n")[0].split(" ")[0].contains("Booking")) {
+        showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.asset(
+                        "assets/icons/close.png",
+                        width: 50,
+                        height: 50,
+                      ),
+                      SizedBox(height: 20.h),
+                      const Text(
+                        "Qr code is invalid.",
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w400),
+                      ),
+                    ],
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(ctx).pop();
+                        controller.resumeCamera();
+                        result = null;
+                      },
+                      child: const Text(
+                        "Continue",
+                        style: TextStyle(color: Colors.cyan, fontSize: 17),
+                      ),
+                    ),
+                  ],
+                ));
+        return;
+      }
       try {
+        log("scanDatcodea ${scanData.code}");
         final updatedData = await client
             .updateScannedStatus(scanData.code!.split("\n")[0].split(" ").last);
         // ignore: use_build_context_synchronously
@@ -190,6 +229,16 @@ class _ScanQrPagetate extends ConsumerState<ScanQrPage> {
     } else {
       return true;
     }
+  }
+
+  bool initStateBool = true;
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (initStateBool) {
+      controller?.resumeCamera();
+    }
+    initStateBool = false;
   }
 
   @override

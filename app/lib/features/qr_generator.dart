@@ -21,15 +21,43 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:csv/csv.dart';
 
-class QrGeneratorScreen extends ConsumerWidget {
+class QrGeneratorScreen extends ConsumerStatefulWidget {
   const QrGeneratorScreen({super.key});
 
+  @override
+  ConsumerState<QrGeneratorScreen> createState() => _QrGeneratorScreentate();
+}
+
+class _QrGeneratorScreentate extends ConsumerState<QrGeneratorScreen> {
   Future<String> loadAsset(String path) async {
     return await rootBundle.loadString(path);
   }
 
+  bool isLoading = true;
+  bool initStateBool = true;
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (initStateBool) {
+      fetchData();
+    }
+    initStateBool = false;
+  }
+
+  fetchData() async {
+    // ref.read(isLoadingProvider.notifier).state = true;
+    isLoading = true;
+    final DioClient client = DioClient();
+    final updatedData = await client.getEvent();
+    if (updatedData != null) {
+      isLoading = false;
+      ref.read(eventDataProvider.notifier).state = updatedData;
+    }
+    // ref.read(isLoadingProvider.notifier).state = false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final excelFile = ref.watch(excelFileProvider);
     final extractedData = ref.watch(extractedDataFromFile);
     final qrCodes = ref.watch(qrCodesProvider);
@@ -106,7 +134,7 @@ class QrGeneratorScreen extends ConsumerWidget {
                         width: 30.w,
                         height: 30.h,
                         child: Image.asset(
-                          "assets/images/ticket.jpg",
+                          "assets/images/logo.png",
                         )),
                     SizedBox(
                       width: 2.h,
@@ -296,10 +324,14 @@ class QrGeneratorScreen extends ConsumerWidget {
                     )),
           Visibility(
               visible: extractedData != null,
-              child: Container(
-                  margin:
-                      EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
-                  child: const DropDownField())),
+              child: isLoading
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : Container(
+                      margin: EdgeInsets.symmetric(
+                          horizontal: 20.w, vertical: 20.h),
+                      child: const DropDownField())),
           Visibility(
               visible: extractedData != null,
               child: Container(
@@ -348,8 +380,8 @@ class QrGeneratorScreen extends ConsumerWidget {
                       ? const CircularProgressIndicator(
                           color: Colors.white,
                         )
-                      : const Icon(Icons.save_rounded),
-                  label: const Text("Save To Database"),
+                      : const Icon(Icons.send_rounded),
+                  label: const Text("Send Tickets"),
                 )),
           )
         ],
@@ -391,8 +423,14 @@ class QrGeneratorScreen extends ConsumerWidget {
     try {
       await client.createTickets(newFilterUserData);
       ref.read(loadingProvider.notifier).state = false;
+      ref.refresh(excelFileProvider);
+      ref.refresh(extractedDataFromFile);
+      ref.refresh(qrCodesProvider);
+      ref.refresh(qrCodesKeysProvider);
+      ref.refresh(exampleImages);
+      ref.refresh(randomQrUuidProvider);
       // ignore: use_build_context_synchronously
-      alertDialog(context);
+      alertDialog(context, ref);
     } catch (e) {
       ref.read(loadingProvider.notifier).state = false;
       CustomScaffoldMessenger.error("Invalid Credentails", context);

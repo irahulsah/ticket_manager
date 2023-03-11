@@ -49,6 +49,7 @@ dependencies:
   syncfusion_localizations: ^20.4.53
   flutter_localizations:
     sdk: flutter
+  flutter_native_splash: ^2.2.19
 
 dev_dependencies:
   flutter_test:
@@ -77,6 +78,11 @@ flutter:
   assets:
     - assets/icons/
     - assets/images/
+
+flutter_native_splash:
+  color: "#42a5f5"
+  branding: "assets/images/logo.png"
+  branding_mode: "center"
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

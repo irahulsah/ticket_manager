@@ -43,7 +43,7 @@ class _LoginState extends ConsumerState<Login> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 80.h),
               child: Form(
                 key: formKey,
                 child: Column(
@@ -52,7 +52,7 @@ class _LoginState extends ConsumerState<Login> {
                   children: [
                     Center(
                       child: Image.asset(
-                        "assets/images/ticket.jpg",
+                        "assets/images/logo.png",
                         height: 100.h,
                       ),
                     ),
@@ -99,13 +99,11 @@ class _LoginState extends ConsumerState<Login> {
                                   "accessToken", loginresp["accessToken"]);
                               ref.read(isLoadingProvider.notifier).state =
                                   false;
-
-                              Navigator.of(context).push(
+                              Navigator.of(context).pushReplacement(
                                 MaterialPageRoute(
                                   builder: (context) => const TakeTicket(),
                                 ),
                               );
-                              log("loginresp $loginresp");
                             }
                           } catch (e) {
                             log("e $e");

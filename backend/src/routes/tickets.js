@@ -30,7 +30,7 @@ const sendMail = (body) => {
       from: process.env.EMAIL,
       to: mail.email,
       subject: "Ticket Booked",
-      text: `Dear ${mail.name}, \n Your ticket has been booked succesfully. the details is attached below.\n Seat Number: ${mail.seatNumber}`,
+      text: `Dear ${mail.name}, \n Your ticket has been booked succesfully. the details is attached below.\n Seat Number: ${mail.seatNumber}        `,
       attachments: [
         {
           filename: mail.qr_code.split("/uploads/")[1],
