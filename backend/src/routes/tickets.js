@@ -100,7 +100,7 @@ router.put("/scan/:uuid", async (req, res) => {
   if(ticket === null) {
     return res.status(400).send({ message: "Ticket not available" });
   }
-  if (ticket?.isActive === false) {
+  if (ticket.isActive === false) {
     return res.status(400).send({ message: "Ticket is expired" });
   }
   const result = await req.context.models.Ticket.findOneAndUpdate(
