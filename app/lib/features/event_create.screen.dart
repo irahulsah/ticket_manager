@@ -16,6 +16,8 @@ class _TakeTicketFormPagetate extends ConsumerState<TakeTicketFormPage> {
   TextEditingController _scannedByController = TextEditingController();
   bool isLoading = false;
   TextEditingController _eventsController = TextEditingController();
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
   @override
   void initState() {
     _scannedByController = TextEditingController();
@@ -30,21 +32,28 @@ class _TakeTicketFormPagetate extends ConsumerState<TakeTicketFormPage> {
   }
 
   handleSubmit() async {
-    setState(() {
-      isLoading = true;
-    });
-    final DioClient client = DioClient();
+    final form = formKey.currentState;
+    if (form!.validate()) {
+      setState(() {
+        isLoading = true;
+      });
+      final DioClient client = DioClient();
 
-    final respData = await client.createEvent({"name": _eventsController.text});
-    // ignore: use_build_context_synchronously
-    setState(() {
-      isLoading = false;
-    });
-    if (context.mounted) {
-      final previousData = ref.watch(eventDataProvider);
-      log("$previousData $respData");
-      ref.read(eventDataProvider.notifier).state = [...previousData, respData];
-      Navigator.of(context).pop();
+      final respData =
+          await client.createEvent({"name": _eventsController.text});
+      // ignore: use_build_context_synchronously
+      setState(() {
+        isLoading = false;
+      });
+      if (context.mounted) {
+        final previousData = ref.watch(eventDataProvider);
+        log("$previousData $respData");
+        ref.read(eventDataProvider.notifier).state = [
+          ...previousData,
+          respData
+        ];
+        Navigator.of(context).pop();
+      }
     }
   }
 
@@ -63,47 +72,49 @@ class _TakeTicketFormPagetate extends ConsumerState<TakeTicketFormPage> {
         elevation: 0,
       ),
       body: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 20,
-        ),
-        child: Column(
-          // crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // inputField("Scanned By", _scannedByController),
-            // const SizedBox(
-            //   height: 20,
-            // ),
-            inputField("Event Name", _eventsController),
-            const SizedBox(
-              height: 20,
-            ),
-            GestureDetector(
-              onTap: isLoading
-                  ? () {}
-                  : () {
-                      handleSubmit();
-                    },
-              child: Container(
-                height: 40,
-                width: 150,
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 156, 226, 247),
-                  borderRadius: BorderRadius.circular(12),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 20,
+          ),
+          child: Form(
+            key: formKey,
+            child: Column(
+              // crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // inputField("Scanned By", _scannedByController),
+                // const SizedBox(
+                //   height: 20,
+                // ),
+                inputField("Event Name", _eventsController),
+                const SizedBox(
+                  height: 20,
                 ),
-                child: Center(
-                    child: Text(
-                  isLoading ? "Creating.." : "Sumbit",
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 18,
+                GestureDetector(
+                  onTap: isLoading
+                      ? () {}
+                      : () {
+                          handleSubmit();
+                        },
+                  child: Container(
+                    height: 40,
+                    width: 150,
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 156, 226, 247),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Center(
+                        child: Text(
+                      isLoading ? "Creating.." : "Sumbit",
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                      ),
+                    )),
                   ),
-                )),
-              ),
-            )
-          ],
-        ),
-      ),
+                )
+              ],
+            ),
+          )),
     );
   }
 

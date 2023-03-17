@@ -60,6 +60,26 @@ class TakeTicket extends ConsumerWidget {
         elevation: 0,
       ),
       body: bottomNavWidgets[currentIndex]["widget"],
+      floatingActionButton: FloatingActionButton(
+        child: Icon(
+          Icons.qr_code_outlined,
+          size: 40,
+        ),
+        tooltip: 'Increment',
+        elevation: 2.0,
+        backgroundColor: Colors.purple[900],
+        onPressed: () {
+          ref.read(bottomNavIndex.notifier).state = 1;
+
+          // setState(
+          //   () {
+          //     currentScreen = Profile();
+          //     currentTab = 0;
+          //   },
+          // );
+        },
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: ClipRRect(
         borderRadius: BorderRadius.circular(20),
         child: BottomNavigationBar(
@@ -70,7 +90,7 @@ class TakeTicket extends ConsumerWidget {
             items: const [
               BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
               BottomNavigationBarItem(
-                  icon: Icon(Icons.qr_code, size: 30), label: "Scan"),
+                  icon: Icon(Icons.qr_code, size: 0), label: ""),
               BottomNavigationBarItem(
                   icon: Icon(Icons.add_card), label: "Tickets"),
             ]),

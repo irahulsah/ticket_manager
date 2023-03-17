@@ -61,9 +61,11 @@ class _ScanQrPagetate extends ConsumerState<ScanQrPage> {
         return;
       }
       try {
-        log("scanDatcodea ${scanData.code}");
+        log("scanDatcodea ${scanData.code} ${scanData.code!.split("\n")[0].split(" ").last}");
         final updatedData = await client
             .updateScannedStatus(scanData.code!.split("\n")[0].split(" ").last);
+        log("updatedData ${updatedData}");
+
         // ignore: use_build_context_synchronously
         showModalBottomSheet(
             isDismissible: false,

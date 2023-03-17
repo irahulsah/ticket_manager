@@ -93,7 +93,7 @@ router.post("/upload", upload.array("files"), async (req, res) => {
   return res.send(files);
 });
 
-router.put("/:uuid", async (req, res) => {
+router.put("/scan/:uuid", async (req, res) => {
   const ticket = await req.context.models.Ticket.findOne({
     uniqueUUid: req.params.uuid,
   });
