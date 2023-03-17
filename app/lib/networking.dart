@@ -7,8 +7,8 @@ class DioClient {
   final dio.Dio _dio = dio.Dio();
   final box = GetStorage();
 
-  // final _baseUrl = 'http://192.168.2.100:3000';
-  final _baseUrl = 'http://3.14.86.171:3000';
+  final _baseUrl = 'http://192.168.1.91:3000';
+  // final _baseUrl = 'http://3.14.86.171:3000';
 
   Future<dynamic> uploadImages(files) async {
     // Perform GET request to the endpoint "/users/<id>"

@@ -94,10 +94,11 @@ router.post("/upload", upload.array("files"), async (req, res) => {
 });
 
 router.put("/scan/:uuid", async (req, res) => {
+  console.log(req.params.uuid)
   const ticket = await req.context.models.Ticket.findOne({
     uniqueUUid: req.params.uuid,
   });
-  if (ticket.isActive === false) {
+  if (ticket?.isActive === false) {
     return res.status(400).send({ message: "Ticket is expired" });
   }
   const result = await req.context.models.Ticket.findOneAndUpdate(
