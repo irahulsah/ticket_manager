@@ -1,50 +1,8 @@
 const { Router } = require("express");
 
-const multer = require("multer");
-const nodemailer = require("nodemailer");
+const {upload, sendMail } = require('../utils')
 
-var storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "./uploads");
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + file.originalname);
-  },
-});
-var upload = multer({ storage: storage });
 
-// send mail
-
-let mailTransporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL,
-    pass: process.env.PASSWORD,
-  },
-});
-
-const sendMail = (body) => {
-  let promise = [];
-  for (let mail of body) {
-    let mailDetails = {
-      from: process.env.EMAIL,
-      to: mail.email,
-      subject: "Ticket Booked",
-      text: `Dear ${mail.name}, \n Your ticket has been booked succesfully. the details is attached below.\n Seat Number: ${mail.seatNumber}        `,
-      attachments: [
-        {
-          filename: mail.qr_code.split("/uploads/")[1],
-          path: process.env.BASE_URL + mail.qr_code,
-          cid: mail.qr_code,
-        },
-      ],
-    };
-    promise.push(mailTransporter.sendMail(mailDetails));
-  }
-  Promise.all(promise).then((res) => {
-    // console.log(res)
-  });
-};
 
 const router = Router();
 
@@ -60,13 +18,16 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/scanned-ticket-count", async (req, res) => {
-  let body = { isActive: false, user: req.auth._id };
+  let body = { isActive: false, user: req.auth._id};
   const ticketsCount = await req.context.models.Ticket.countDocuments(body);
   return res.send(ticketsCount.toString());
 });
 
 router.get("/scanned-ticket-percentage", async (req, res) => {
   let body = { user: req.auth._id };
+  if(req.query.event && req.query.event !== "null"){
+    body["event"] = req.query.event;
+  }
   const ticketsCount = [
     req.context.models.Ticket.countDocuments({ ...body, isActive: false }),
     req.context.models.Ticket.countDocuments({ ...body }),

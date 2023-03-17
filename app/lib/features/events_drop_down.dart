@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:event_tracker/controller/qr_generator.controller.dart';
 import 'package:event_tracker/networking.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +15,6 @@ class EventsDropDownField extends ConsumerStatefulWidget {
 }
 
 class _EventsDropDownFieldtate extends ConsumerState<EventsDropDownField> {
-  String? dropDownIndex;
   bool isLoading = false;
   @override
   void initState() {
@@ -44,6 +45,7 @@ class _EventsDropDownFieldtate extends ConsumerState<EventsDropDownField> {
   Widget build(BuildContext context) {
     final isLoading = ref.read(isLoadingProvider);
     final events = ref.read(eventDataProvider);
+    final eventValue = ref.watch(eventValueDropdown);
     return isLoading
         ? const Center(
             child: CircularProgressIndicator(),
@@ -67,13 +69,10 @@ class _EventsDropDownFieldtate extends ConsumerState<EventsDropDownField> {
                     ))
                 .toList(),
             onChanged: (String? index) {
-              ref.read(eventValueDropdown.notifier).state = index;
-              setState(() {
-                dropDownIndex = index;
-              });
+              ref.read(eventValueDropdown.notifier).state = index.toString();
               widget.onChange(index);
             },
-            value: dropDownIndex,
+            value: eventValue,
           );
   }
 }

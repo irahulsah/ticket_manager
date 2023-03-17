@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:event_tracker/controller/qr_generator.controller.dart';
 import 'package:event_tracker/networking.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class TakeTicketFormPage extends ConsumerStatefulWidget {
@@ -147,21 +148,24 @@ class _TakeTicketFormPagetate extends ConsumerState<TakeTicketFormPage> {
             fontSize: 18,
           ),
           decoration: InputDecoration(
-            contentPadding: const EdgeInsets.only(
-              left: 10,
+            contentPadding: EdgeInsets.symmetric(
+              vertical: 15.h,
+              horizontal: 15.w,
             ),
-            border: InputBorder.none,
-            hintText: hintText,
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: const BorderSide(
-                color: Colors.grey,
-              ),
+            hintText: "Event Name",
+            hintStyle: TextStyle(
+              // color: Theme.of(context).colorScheme.tertiary,
+              fontSize: 16.sp,
             ),
+            border: OutlineInputBorder(
+              // borderSide: BorderSide.a,
+              borderRadius: BorderRadius.circular(12.r),
+            ),
+            filled: true,
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: const BorderSide(
-                color: Colors.black,
+              borderRadius: BorderRadius.circular(12.r),
+              borderSide: BorderSide(
+                width: 2.w,
               ),
             ),
           ),

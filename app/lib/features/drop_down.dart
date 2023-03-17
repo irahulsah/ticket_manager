@@ -17,7 +17,6 @@ class _DropDownFieldtate extends ConsumerState<DropDownField> {
   bool isLoading = false;
   @override
   Widget build(BuildContext context) {
-    final isLoading = ref.read(isLoadingProvider);
     final events = ref.watch(eventDataProvider);
     return DropdownButton(
       icon: const Icon(Icons.expand_circle_down),
@@ -38,7 +37,7 @@ class _DropDownFieldtate extends ConsumerState<DropDownField> {
               ))
           .toList(),
       onChanged: (String? index) {
-        ref.read(eventValueDropdown.notifier).state = index;
+        ref.read(eventValueDropdown.notifier).state = index.toString();
         setState(() {
           dropDownIndex = index;
         });

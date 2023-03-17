@@ -1,4 +1,4 @@
-import 'package:event_tracker/features/take_ticket.dart';
+import 'package:event_tracker/features/homepage.dart';
 import 'package:flutter/material.dart';
 
 alertDialog(BuildContext context, ref) {

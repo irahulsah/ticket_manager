@@ -18,4 +18,9 @@ StateProvider qrCodeScannedData = StateProvider((ref) => null);
 StateProvider eventDataProvider = StateProvider((ref) => []);
 StateProvider isLoadingProvider = StateProvider((ref) => false);
 
-StateProvider eventValueDropdown = StateProvider((ref) => "");
+StateProvider<String> eventValueDropdown = StateProvider<String>((ref) => "");
+
+AutoDisposeStateProvider fillFormManuallyProvider =
+    AutoDisposeStateProvider((ref) => false);
+AutoDisposeStateProvider fillFormManuallyFieldsProvider =
+    AutoDisposeStateProvider((ref) => []);

@@ -1,5 +1,5 @@
+import 'package:event_tracker/features/homepage.dart';
 import 'package:event_tracker/features/login.dart';
-import 'package:event_tracker/features/take_ticket.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_storage/get_storage.dart';
@@ -22,7 +22,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       if (isLoggedIn) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (context) => const TakeTicket(),
+            builder: (context) => const Homepage(),
           ),
         );
       } else {

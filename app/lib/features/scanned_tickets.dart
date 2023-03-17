@@ -26,13 +26,9 @@ class _ScannedTicketstate extends ConsumerState<ScannedTickets> {
   }
 
   fetchCountOfTicket() async {
-    final count = [
-      client.getScannedTicketCount(),
-      client.getScannedTicketPercentage()
-    ];
+    final count = [client.getScannedTicketPercentage()];
     Future.wait(count).then((resp) {
-      ref.read(scannedCountProvider.notifier).state = resp[0];
-      ref.read(scannedPercentageProvider.notifier).state = resp[1];
+      ref.read(scannedPercentageProvider.notifier).state = resp[0];
     });
   }
 
@@ -44,19 +40,25 @@ class _ScannedTicketstate extends ConsumerState<ScannedTickets> {
       ref.read(scannedQrListLoading.notifier).state = false;
     } catch (e) {
       ref.read(scannedQrListLoading.notifier).state = false;
-      log("$e e thhs");
     }
   }
 
   onChange(event) async {
+    ref.read(scannedQrListLoading.notifier).state = true;
+
     try {
-      final resp = await client.getTicket(event: event);
+      List<Future> futures = [
+        client.getTicket(event: event),
+        client.getScannedTicketPercentage(event: event),
+      ];
+      final resp = await Future.wait(futures);
+
       ref.read(scannedQrList.notifier).state =
-          resp.map((res) => TicketModel.fromJson(res)).toList();
+          resp[0].map((res) => TicketModel.fromJson(res)).toList();
+      ref.read(scannedPercentageProvider.notifier).state = resp[1];
       ref.read(scannedQrListLoading.notifier).state = false;
     } catch (e) {
       ref.read(scannedQrListLoading.notifier).state = false;
-      log("$e e thhs");
     }
   }
 
@@ -135,10 +137,12 @@ class _ScannedTicketstate extends ConsumerState<ScannedTickets> {
   Widget build(BuildContext context) {
     final ticketList = ref.watch(scannedQrList);
     final isLoading = ref.watch(scannedQrListLoading);
-    final scannedCount = ref.watch(scannedCountProvider);
     return SingleChildScrollView(
       child: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? Container(
+              alignment: Alignment.center,
+              margin: EdgeInsets.only(top: 200.h),
+              child: const CircularProgressIndicator())
           : Container(
               padding: const EdgeInsets.symmetric(
                 horizontal: 20,
@@ -151,7 +155,7 @@ class _ScannedTicketstate extends ConsumerState<ScannedTickets> {
                       padding: EdgeInsets.zero,
                       height: 250.h,
                       child: _buildMarkerPointerExample()),
-                  Text(scannedCount.toString(),
+                  Text(ticketList.length.toString(),
                       style: TextStyle(
                           fontSize: 22.sp, fontWeight: FontWeight.w500)),
                   Container(
@@ -165,7 +169,7 @@ class _ScannedTicketstate extends ConsumerState<ScannedTickets> {
                           margin: EdgeInsets.only(top: 30.h),
                           alignment: Alignment.center,
                           child: Text(
-                            "No tickets generated",
+                            "No Scanned tickets",
                             style: TextStyle(fontSize: 20.sp),
                           ))
                       : Column(children: [

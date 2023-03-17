@@ -1,8 +1,8 @@
 import 'dart:developer';
 
 import 'package:event_tracker/controller/qr_generator.controller.dart';
+import 'package:event_tracker/features/homepage.dart';
 import 'package:event_tracker/features/signup.dart';
-import 'package:event_tracker/features/take_ticket.dart';
 import 'package:event_tracker/features/toast.dart';
 import 'package:event_tracker/networking.dart';
 import 'package:flutter/material.dart';
@@ -101,7 +101,7 @@ class _LoginState extends ConsumerState<Login> {
                                   false;
                               Navigator.of(context).pushReplacement(
                                 MaterialPageRoute(
-                                  builder: (context) => const TakeTicket(),
+                                  builder: (context) => const Homepage(),
                                 ),
                               );
                             }

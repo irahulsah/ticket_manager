@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'dart:developer' as dev;
 import 'dart:ui';
 
 import 'package:event_tracker/controller/qr_generator.controller.dart';
@@ -64,6 +65,8 @@ class _QrGeneratorScreentate extends ConsumerState<QrGeneratorScreen> {
     final qrCodesKeys = ref.watch(qrCodesKeysProvider);
     final exampleImg = ref.watch(exampleImages);
     final isLoading = ref.watch(loadingProvider);
+    final fillFormManually = ref.watch(fillFormManuallyProvider);
+    final fillFormManuallyFields = ref.watch(fillFormManuallyFieldsProvider);
 
     ScrollController controller = ScrollController();
 
@@ -242,18 +245,122 @@ class _QrGeneratorScreentate extends ConsumerState<QrGeneratorScreen> {
           ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+            child: Column(
               children: [
-                Expanded(
-                    child: Text(
-                  "Import File",
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Expanded(
+                        child: Text(
+                      "Upload Csv File",
+                      style: TextStyle(
+                          fontSize: 18.sp, fontWeight: FontWeight.w400),
+                    )),
+                    IconButton(
+                        onPressed: pickFileContainsExcel,
+                        icon: const Icon(Icons.upload)),
+                  ],
+                ),
+                SizedBox(
+                  height: 10.h,
+                ),
+                Text(
+                  "Or",
                   style:
                       TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w400),
-                )),
-                IconButton(
-                    onPressed: pickFileContainsExcel,
-                    icon: const Icon(Icons.upload)),
+                ),
+                SizedBox(
+                  height: 10.h,
+                ),
+                ElevatedButton(
+                    onPressed: () {
+                      ref.read(extractedDataFromFile.notifier).state = null;
+                      ref.read(fillFormManuallyProvider.notifier).state = true;
+                      ref.read(fillFormManuallyFieldsProvider.notifier).state =
+                          [
+                        {"name": "", "seatNumber": "", "email": ""},
+                      ];
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text("Fill form Manuallly"),
+                    )),
+                Visibility(
+                    visible: fillFormManually,
+                    child: Form(
+                        child: Column(children: [
+                      ...fillFormManuallyFields.map((field) {
+                        final index = fillFormManuallyFields.indexOf(field);
+                        return Column(
+                          children: [
+                            SizedBox(
+                              height: 30.h,
+                            ),
+                            Text(
+                              "Person ${(index + 1).toString()}",
+                              style: TextStyle(
+                                  fontSize: 16.sp, fontWeight: FontWeight.w400),
+                            ),
+                            inputField("Full Name", "name", index),
+                            inputField("Email", "email", index),
+                            inputField("Seat Number", "seatNumber", index),
+                          ],
+                        );
+                      }),
+                      SizedBox(
+                        height: 15.h,
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          ElevatedButton.icon(
+                              onPressed: () {
+                                saveManaulFields();
+                              },
+                              icon: const Icon(Icons.save),
+                              label: const Text("Save")),
+                          SizedBox(
+                            width: 10.w,
+                          ),
+                          Container(
+                              alignment: Alignment.centerRight,
+                              child: ElevatedButton.icon(
+                                  onPressed: () {
+                                    if (fillFormManuallyFields[
+                                                fillFormManuallyFields.length -
+                                                    1]["name"] ==
+                                            "" ||
+                                        fillFormManuallyFields[
+                                                fillFormManuallyFields.length -
+                                                    1]["seatNumber"] ==
+                                            "" ||
+                                        fillFormManuallyFields[
+                                                fillFormManuallyFields.length -
+                                                    1]["email"] ==
+                                            "") {
+                                      CustomScaffoldMessenger.error(
+                                          "Please input name, email or seatNumber to continue",
+                                          context);
+                                      return;
+                                    }
+                                    ref
+                                        .read(fillFormManuallyFieldsProvider
+                                            .notifier)
+                                        .state = [
+                                      ...fillFormManuallyFields,
+                                      {
+                                        "name": "",
+                                        "seatNumber": "",
+                                        "email": ""
+                                      },
+                                    ];
+                                  },
+                                  icon: const Icon(Icons.add),
+                                  label: const Text("Add"))),
+                        ],
+                      )
+                    ]))),
               ],
             ),
           ),
@@ -274,9 +381,7 @@ class _QrGeneratorScreentate extends ConsumerState<QrGeneratorScreen> {
           Container(
               margin: EdgeInsets.only(left: 20.w, top: 20.h),
               child: Text(
-                extractedData == null
-                    ? "Select a csv file"
-                    : "All Exported Data",
+                extractedData == null ? "" : "All Exported Data",
                 style: TextStyle(fontSize: 16.sp),
               )),
           SizedBox(
@@ -400,6 +505,76 @@ class _QrGeneratorScreentate extends ConsumerState<QrGeneratorScreen> {
             ),
           )),
     );
+  }
+
+  Widget inputField(String hintText, String name, index) {
+    final fillFormManuallyFields = ref.watch(fillFormManuallyFieldsProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          hintText,
+          style: const TextStyle(
+            color: Colors.black,
+            fontSize: 18,
+          ),
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        TextFormField(
+          validator: (dynamic value) {
+            if (value?.isEmpty) {
+              return "Event Name is required.";
+            }
+            return null;
+          },
+          // controller: controller,
+          style: const TextStyle(
+            fontSize: 18,
+          ),
+          decoration: InputDecoration(
+            contentPadding: EdgeInsets.symmetric(
+              vertical: 15.h,
+              horizontal: 15.w,
+            ),
+            hintText: "Event Name",
+            hintStyle: TextStyle(
+              // color: Theme.of(context).colorScheme.tertiary,
+              fontSize: 16.sp,
+            ),
+            border: OutlineInputBorder(
+              // borderSide: BorderSide.a,
+              borderRadius: BorderRadius.circular(12.r),
+            ),
+            filled: true,
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.r),
+              borderSide: BorderSide(
+                width: 2.w,
+              ),
+            ),
+          ),
+          onChanged: (String value) {
+            final copyManualFieldValue = fillFormManuallyFields;
+            copyManualFieldValue[index][name] = value;
+            ref.read(fillFormManuallyFieldsProvider.notifier).state =
+                copyManualFieldValue;
+          },
+        ),
+      ],
+    );
+  }
+
+  saveManaulFields() {
+    CustomScaffoldMessenger.sucess("User Saved Successfully", context);
+    ref.read(fillFormManuallyProvider.notifier).state = false;
+    ref.read(extractedDataFromFile.notifier).state = ref
+        .read(fillFormManuallyFieldsProvider.notifier)
+        .state
+        .map((field) => TicketModel.fromJson(field))
+        .toList();
+    ref.read(fillFormManuallyFieldsProvider.notifier).state = [];
   }
 
   handleSubmit(ref, context) async {

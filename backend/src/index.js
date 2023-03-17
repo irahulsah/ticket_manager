@@ -36,6 +36,7 @@ app.use('/session',middleareAuth, routes.session);
 app.use('/users',routes.auth);
 app.use('/tickets',middleareAuth, routes.tickets);
 app.use('/events',middleareAuth, routes.events);
+app.use('/report',middleareAuth, routes.report);
 
 // * Start * //
 
